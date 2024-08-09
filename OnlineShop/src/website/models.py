@@ -1,21 +1,36 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-import os
-
-from accounts.models import Customers, MarketAddress
+from accounts.models import Customers, Staffs
 
 # Create your models here.
 class Markets(models.Model):
     market_name = models.CharField(max_length=100) 
-    market_address = models.OneToOneField(MarketAddress, on_delete=models.DO_NOTHING)
+    address = models.TextField()
+    state = models.CharField(max_length=30)
+    city = models.CharField(max_length=30)
+    postal_code = models.CharField(max_length=20)
+    telephone = models.CharField(max_length=15, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "فروشگاه"
+        verbose_name_plural = "فروشگاها"
+
+class StaffMarkets(models.Model):
+    staff = models.OneToOneField(Staffs, on_delete=models.CASCADE, related_name='market')
+    market = models.ForeignKey(Markets, on_delete=models.CASCADE, related_name='staff')
     
 class Categories(models.Model):
     title = models.CharField(max_length=60)
     parent = models.ForeignKey('Categories', on_delete=models.CASCADE)
 
 class Discounts(models.Model):
-    Percent = models
+    DISCOUNT_TYPES = [
+        ('percentage', 'Percentage'),
+        ('value', 'Value'),
+    ]
+    dicount_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="Percentage")
+    dicount_amount = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     applied_by = models.ForeignKey(Customers, on_delete=models.DO_NOTHING)   
@@ -25,12 +40,12 @@ class Products(models.Model):
     quantity = models.IntegerField()
     discription = models.TextField()
     market = models.ManyToManyField(Markets, related_name='product')
-    category = models.ForeignKey(Categories, on_delete=models.SET_NULL, related_name='product')
-    dicount = models.OneToOneField(Discounts, on_delete=models.SET_NULL, related_name='product')    
+    category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, related_name='product')
+    dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')    
     
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")
-    product = models.ForeignKey(Products, on_delete=models.SET_NULL, related_name="image")
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="image")
 
 class Ratings(models.Model):
     rate = models.SmallIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
