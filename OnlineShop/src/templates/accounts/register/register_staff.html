@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'website/website_base.html' %}
 
 {% block title %} Register {% endblock title %}   
 
@@ -76,9 +76,9 @@
                                             {{register_form.confirm_password.label_tag}}
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        {{register_form.errors}}
-                                    </div>
+                                    {% block message %}
+                                        {% include 'message/message.html' %}
+                                    {% endblock message %}
                                 </div>                                
                                 <div class="mt-4 mb-0">
                                     <div class="d-grid"><button class="btn btn-primary btn-block"  type="submit" href="{% url 'accounts:register_customer' %}">Create Account</button></div>
