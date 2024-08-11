@@ -29,10 +29,13 @@ class Discounts(models.Model):
         ('percentage', 'Percentage'),
         ('value', 'Value'),
     ]
-    dicount_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="Percentage")
-    dicount_amount = models.IntegerField()
+    dis_code = models.CharField(max_length=32, unique=True)
+    dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="Percentage")
+    dis_amount = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    redeemed = models.BooleanField(default=False)
+    expired = models.BooleanField(default=False)
     applied_by = models.ForeignKey(Customers, on_delete=models.DO_NOTHING)   
 
 class Products(models.Model):

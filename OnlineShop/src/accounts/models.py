@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError("Please provide an email address")
         
-        email = self.normalize_email(email) 
+        email = self.normalize_email(email)
         user = self.model(email=email ,**extra_fields)
         # Hashes the password through set_password and within it make_password hasher from django.contrib.auth.hashers 
         user.set_password(password)     
@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
         
         return self.create_user(email, password, **extra_fields) 
 
-
+#TODO: There is some bugs when deleteing the user from Django Admin Panel
 # we are using the PermissionsMixin here so that we can use written permissions and fetch them in the mean time
 class User(AbstractUser, PermissionsMixin):
     WEBSITE_ROLLS = [
@@ -58,7 +58,7 @@ class User(AbstractUser, PermissionsMixin):
     REQUIRED_FIELDS = []
     
     @classmethod
-    def email_exist(cls, email):
+    def email_exist(cls, email:str) -> bool:
         return cls.objects.filter(email__iexact = email).exists()
     
     def get_profile_url(self):
@@ -72,12 +72,13 @@ class Staffs(User):
     def get_profile_url(self):
         return "/staff/dashboard/"
     
-    def save(self, *args, **kwargs):
-        if self.roll == 'Owner':
-            self.is_superuser = True
-            self.is_staff = True
-        elif self.roll == 'Manager' or self.roll == 'Operator':
-            self.is_staff = True
+    #TODO: setting permissions on staffs
+    def __set_permission(self, roll:str) -> None:
+        """ Setting permissions base on staffs roll"""
+        pass
+    
+    def save(self, *args, **kwargs) -> None:
+        self.is_staff = True
         super().save(*args, **kwargs)
         
 
@@ -85,7 +86,7 @@ class Customers(User):
     class Meta:
         proxy = True
         
-    def get_profile_url(self):
+    def get_profile_url(self) -> str:
         return "/customer/dashboard/"
     
         
