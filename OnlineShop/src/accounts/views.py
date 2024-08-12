@@ -1,16 +1,17 @@
 # Importing needed Django built-in modules 
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.views.generic import View, FormView
-from django.contrib.auth import authenticate, login
+from django.views.generic import View, FormView, TemplateView
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages 
 
 # Importing Custome Forms
-from accounts.forms import CustomerRegisterForm, StaffRegisterForm, LoginForm
+from accounts.forms import (CustomerRegisterForm, StaffRegisterForm,
+                            LoginForm, StaffProfileForm, MarketEditForm) 
 from website.forms import MarketForm
 
 # Importing Models
-from website.models import StaffMarkets 
+from website.models import StaffMarkets, Markets
 from accounts.models import User
 
 # Create your views here.
@@ -75,7 +76,7 @@ class StaffRegsiterView(View):
                    'market_form' : self.market_form}     
         return render(request, self.template_name, context=context)
                        
-class Login(FormView):
+class LoginView(FormView):
     template_name='accounts/login/login.html' 
     model = User
     form = LoginForm
@@ -97,9 +98,9 @@ class Login(FormView):
                         if is_pass_correct:
                             login(request=request, user=user)
                             if user.is_staff:
-                                pass
+                                return redirect('accounts:dashboard_staff')
                             else:
-                                return redirect(reverse('website:home_page'))
+                                return redirect('website:home_page')
                         messages.warning(request, "Entered informations were incorrect")
                     else:
                         messages.warning(request, "you haven't activated your account yet")
@@ -110,3 +111,48 @@ class Login(FormView):
 
         context = {'login_form' : self.form}
         return render(request, self.template_name, context=context)
+    
+class CustomerPanelView(TemplateView):
+    template_name = 'customer/customer_base.html'
+        
+class StaffPanelView(TemplateView):
+    template_name="accounts/staff/staff_dashboard.html" 
+
+class StaffProfileView(View):
+    template_name="accounts/staff/staff_profile.html"   
+    staff_form = StaffProfileForm
+    market_form = MarketEditForm
+    staff_model = User
+    market_model = Markets
+    
+    def get(self, request):
+        data = StaffMarkets.objects.filter(staff_id = request.user.id).first()
+        if request.user.roll == 'Owner':            
+            context = {'staff_form': self.staff_form(initial=data.staff.__dict__),
+                       'market':self.market_form(initial=data.market.__dict__),
+                       'img':data.staff.img,
+                       'mar_id':data.market.id}
+            return render(request, self.template_name ,context=context)
+        else:
+            context = {'staff_form': self.staff_form(initial=data.staff.__dict__),
+                       'market':self.market_form(initial=data.market.__dict__),
+                       'img':data.staff.img,
+                       'read_only': True}
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request, pk):
+        # try:
+        edited_form = None
+        if 'mar_btn' in request.POST:
+            instance = self.market_model.objects.filter(id=pk).first()
+            edited_form = self.market_form(request.POST, instance=instance)
+            messages.success(request,'Address info successfully edited.')  
+        elif 'acc_btn' in request.POST:
+            instance = self.staff_model.objects.filter(pk=request.user.id).first()
+            edited_form = self.staff_form(request.POST, instance=instance)
+        if edited_form.is_valid():
+            edited_form.save()  
+            messages.success(request,'Your info successfully edited.')                  
+        # except Exception as error:
+        #     messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
+        return redirect("accounts:profile_staff")

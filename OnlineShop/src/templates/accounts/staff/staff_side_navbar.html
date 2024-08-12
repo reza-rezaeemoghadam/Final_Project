@@ -1,0 +1,104 @@
+<div id="layoutSidenav_nav">
+  <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <!-- Start Core -->
+        <div class="sb-sidenav-menu-heading">Core</div>
+        <!-- Start Profile -->
+        <a class="nav-link" href="{% url 'accounts:profile_staff'%}">
+            <div class="sb-nav-link-icon">
+                <i class="fas fa-user-alt"></i>
+            </div>
+            Profile
+        </a>
+        <!-- End Profile -->
+        <!-- Start Dashboard -->
+        <a class="nav-link" href="{% url 'accounts:dashboard_staff' %}">
+            <div class="sb-nav-link-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            Dashboard
+        </a>
+        <!-- End Dashboard -->
+        <!-- End Core -->
+        <!-- Start Managements -->
+        <div class="sb-sidenav-menu-heading">Managements</div>
+        <!-- Start Staff Manager -->
+        <a
+          class="nav-link collapsed"
+          href="#"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseStaffs"
+          aria-expanded="false"
+          aria-controls="collapseStaffs"
+        >
+          <div class="sb-nav-link-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          Staff
+          <div class="sb-sidenav-collapse-arrow">
+            <i class="fas fa-angle-down"></i>
+          </div>
+        </a>
+        <div
+          class="collapse"
+          id="collapseStaffs"
+          aria-labelledby="headingOne"
+          data-bs-parent="#sidenavAccordion"
+        >
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" href="layout-static.html">Add staff</a>
+            <a class="nav-link" href="layout-sidenav-light.html">Edit staff</a>
+          </nav>
+        </div>
+        <!-- End Staff Manager -->
+        <!-- Start Product Manager -->
+        <a
+          class="nav-link collapsed"
+          href="#"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseProducts"
+          aria-expanded="false"
+          aria-controls="collapseProducts"
+        >
+          <div class="sb-nav-link-icon">
+            <i class="fas fa-cart-shopping"></i>
+          </div>
+          Product
+          <div class="sb-sidenav-collapse-arrow">
+            <i class="fas fa-angle-down"></i>
+          </div>
+        </a>
+        <div
+          class="collapse"
+          id="collapseProducts"
+          aria-labelledby="headingOne"
+          data-bs-parent="#sidenavAccordion"
+        >
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" href="layout-static.html">Add Product</a>
+            <a class="nav-link" href="layout-sidenav-light.html">Edit Product</a>
+          </nav>
+        </div>
+        <!-- End Product Manager -->
+        <!-- Start Discount -->
+        <!-- End Managements -->
+        <div class="sb-sidenav-menu-heading">Addons</div>
+        <a class="nav-link" href="charts.html">
+          <div class="sb-nav-link-icon">
+            <i class="fas fa-chart-area"></i>
+          </div>
+          Charts
+        </a>
+        <a class="nav-link" href="tables.html">
+          <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+          Tables
+        </a>
+      </div>
+    </div>
+    <div class="sb-sidenav-footer">
+      <div class="small">Logged in as:</div>
+      {{request.user.username}}
+    </div>
+  </nav>
+</div>

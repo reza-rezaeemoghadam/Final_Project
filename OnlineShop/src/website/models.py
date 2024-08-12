@@ -15,6 +15,9 @@ class Markets(models.Model):
     class Meta:
         verbose_name = "فروشگاه"
         verbose_name_plural = "فروشگاها"
+        
+    def __str__(self):
+        return f"{self.market_name}--{self.address}"
 
 class StaffMarkets(models.Model):
     staff = models.OneToOneField(Staffs, on_delete=models.CASCADE, related_name='market')

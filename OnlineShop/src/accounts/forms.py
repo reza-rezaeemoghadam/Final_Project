@@ -3,7 +3,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 
 from accounts.models import Customers, Staffs
-
+from website.models import Markets
 # Customize Forms
 class CustomerRegisterForm(forms.Form):
     MODEL = Customers
@@ -118,4 +118,62 @@ class LoginForm(forms.Form):
                            label='Password',
                            widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter your password'}))
     
-    # remember_password = 
+    # remember_password =  
+
+class StaffProfileForm(forms.ModelForm):
+    first_name = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your first name'}))    
+    
+    last_name = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your last name'}))  
+    email = forms.EmailField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your email',
+                                                              'readonly':'readonly'}))  
+    phone = forms.CharField(required=True,
+                            widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your phone'}))  
+    img = forms.ImageField(required=True,
+                           widget=forms.FileInput(attrs={'class':"form-control",
+                                                        'onchange':"loadImages(event)"}))
+    roll = forms.CharField(required=True,
+                            widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your roll',
+                                                              'readonly':'readonly'}))  
+    class Meta:
+        model = Staffs
+        fields = ['first_name','last_name','email','phone','img','roll']
+        
+class MarketEditForm(forms.ModelForm):
+    
+    market_name = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter your Market Name'}))
+    
+    address = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter the address'}))
+    
+    state = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter the state'}))
+    
+    city = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter the city'}))
+    
+    postal_code = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter the postal code'}))
+    
+    telephone = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'class': "form-control mt-1",
+                                                              'placeholder':'Enter the phone'}))
+    class Meta:
+        model = Markets
+        fields = ['market_name', 'address', 'state', 'city', 'postal_code', 'telephone']
+    
+    
+    
