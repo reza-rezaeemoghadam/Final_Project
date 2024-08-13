@@ -1,0 +1,46 @@
+{% extends 'accounts/customer/customer_base.html' %} 
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-7">
+    <div class="row">        
+        <h2 class="mb-4">Address Form</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+        {% if create %}
+        <form class="border border-prime rounded mt-4 mb-3" action="{% url 'customers:customer_address_create' %}" method="post"> 
+        {% elif update %}
+            <form class="border border-prime rounded mt-4 mb-3" action="{% url 'customers:customer_address_edit' address_id %}" method="post"> 
+        {% endif %}
+            {% csrf_token %}           
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="InputState" class="col-sm-2 col-form-label">State:</label>
+                    {{customer_address.state}}
+                </div>
+                <div class="col">
+                    <label for="InputCity" class="col-sm-2 col-form-label">City:</label>
+                    {{customer_address.city}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">                    
+                    <label for="InputAddress" class="col-sm-2 col-form-label">Address:</label>
+                    {{customer_address.address}}
+                </div>
+                <div class="col">
+                    <label for="InputPostalCode" class="col-sm-2 col-form-label">PostalCode:</label>
+                    {{customer_address.postal_code}}
+                </div>
+                <div class="row justify-content-end">                
+                    <button type="submit" class="btn mb-3 btn-primary btn-sm col-1 mt-2">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main_content %}

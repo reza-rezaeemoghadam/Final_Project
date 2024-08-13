@@ -1,5 +1,7 @@
 {% extends 'website/website_base.html' %}
 
+{% load static %}
+
 {% block title %} Register {% endblock title %}   
 
 {% block content %}
@@ -94,4 +96,8 @@
         </div>
     </main>
 </div>
-{% endblock content %}        
+{% endblock content %} 
+
+{% block extra_script %}
+    <script src="{% static 'staff/js/scripts.js' %}"></script>
+{% endblock extra_script %}

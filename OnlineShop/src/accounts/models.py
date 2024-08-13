@@ -1,4 +1,4 @@
-from django.contrib.auth.models import BaseUserManager,AbstractUser,PermissionsMixin
+from django.contrib.auth.models import BaseUserManager, AbstractUser, PermissionsMixin
 from django .utils.translation import gettext_lazy as _
 from django.db import models
 
@@ -100,6 +100,13 @@ class CustomerAddress(models.Model):
     class Meta:
         verbose_name = "آدرس مشتری"
         verbose_name_plural = "آدرس مشتریان"
+    
+    @classmethod
+    def address_limit_reached(cls,customer_id) -> bool:
+        count = cls.objects.filter(customer__id=customer_id).count()
+        if count<3:
+            return False
+        return True
 
 
 # permissions = [("complete_access", "Complete Access")]

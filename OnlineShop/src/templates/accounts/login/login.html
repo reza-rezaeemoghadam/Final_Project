@@ -1,5 +1,7 @@
 {% extends 'website/website_base.html' %} 
 
+{% load static %}
+
 {% block title %} Login {% endblock title %}   
 
 {% block content %}  
@@ -50,3 +52,7 @@
             </div>
         </div>
 {% endblock content %}  
+
+{% block extra_script %}
+    <script src="{% static 'staff/js/scripts.js' %}"></script>
+{% endblock extra_script %}

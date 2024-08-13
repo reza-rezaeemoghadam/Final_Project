@@ -1,0 +1,69 @@
+{% extends 'accounts/customer/customer_base.html' %}
+
+{% load static %}
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-7">
+    <div class="row">        
+        <h2 class="mb-4">Personal Info</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+        <div class="row">
+            <form class="border border-prime rounded mt-4" action="{% url 'customers:customer_profile' %}" method="post" enctype="multipart/form-data"> 
+                {% csrf_token %}             
+                <div class="d-flex align-item-center">
+                    <div class="flex-grow-1 col-1">
+                        <label for='first_name' class="col-sm col-form-label">First Name:</label>
+                        {{customer_form.first_name}}
+                        <label for='last_name' class="col-sm col-form-label">Last Name:</label>
+                        {{customer_form.last_name}}
+                    </div>
+                    <div class="flex-grow-1 ms-3 col-1">                    
+                        <img id="inpImg" class="rounded-3 mt-3 mx-auto d-block" style="width: 150px; height: 150px;" src="{{img.url}}" onerror="imageErrors()">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label for='email' class="col-sm-2 col-form-label">Email:</label>
+                        {{customer_form.email}}
+                    </div>
+                    <div class="col">
+                        <label for='phone' class="col-sm-2 col-form-label">Phone:</label>
+                        {{customer_form.phone}}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label id="img" for='img' class="col-sm-2 col-form-label">Image:</label>
+                        {{customer_form.img}}
+                      </div>
+                </div>
+                <button type="submit" class="btn mt-3 mb-3 btn-primary" name="acc_btn">Edit</button>
+            </form>
+        </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_script %}
+<script>
+    const loadImages = (event) => {
+    const files = event.target.files
+    if (files.length > 0) {
+        const imageUrl = URL.createObjectURL(files[0]);
+        const imageElement = document.getElementById('inpImg');
+        imageElement.src = imageUrl;
+    }
+    
+    }
+</script>
+<script>
+    const imageErrors = () => {
+        this.onerror=null; 
+        this.src="{% static 'images/profile/default.jpg' %}";
+    }
+</script>
+{% endblock extra_script %}
