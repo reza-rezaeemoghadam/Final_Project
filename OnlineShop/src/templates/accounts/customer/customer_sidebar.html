@@ -1,0 +1,27 @@
+<div class="border border-prime rounded mt-5 mb-5 col-2">
+    <nav id="sidebar">
+        <div class="p-4 pt-5">
+            <h5>Dashboard</h5>
+                <ul class="list-unstyled components mb-5">
+                    <li class="mt-2">
+                        <a href="{% url 'customers:customer_profile' %}">Profile</a>
+                    </li>
+                    <li class="mt-2">
+                        <a href="{% url 'customers:customer_address_list' %}">Addresses</a>
+                    </li>
+                    <li class="mt-2">
+                        <a href="{% url 'customers:customer_order' %}">Orders History</a>
+                    </li>
+                    <li class="mt-2">
+                        <a href="{% url 'customers:customer_comment' %}">Comments</a>
+                    </li>
+                    <li class="mt-2">
+                        <a href="{% url 'customers:customer_rate' %}">Rates</a>
+                    </li>
+                    <li class="mt-2">
+                        <a href="{% url 'accounts:logout' %}">Logout</a>
+                    </li>
+            </ul>
+        </div>
+    </nav>
+</div>

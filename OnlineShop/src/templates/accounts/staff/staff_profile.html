@@ -1,0 +1,122 @@
+{% extends 'accounts/staff/staff_base.html' %}
+
+{% load static %}
+
+{% block main_title %}
+    <h1 class="mt-4">Profile</h1>
+{% endblock main_title %}
+
+{% block main_breadcrumb %}
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard_staff' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Profile</li>
+    </ol>
+{% endblock main_breadcrumb%}
+
+{% block main_content %}
+    {% block message %}
+        {% include 'message/message.html' %}
+    {% endblock message %}
+    <div class="row">
+        <div class="row">
+            <h3 class="mt-4 col-10">Account</h3>
+        </div>
+            <form class="border border-prime rounded mt-4 col-7" method="post" enctype="multipart/form-data"> 
+                {% csrf_token %}             
+                <div class="d-flex align-item-center">
+                    <div class="flex-grow-1 col-1">
+                        <label for='first_name' class="col-sm col-form-label">First Name:</label>
+                        {{staff_form.first_name}}
+                        <label for='last_name' class="col-sm col-form-label">Last Name:</label>
+                        {{staff_form.last_name}}
+                    </div>
+                    <div class="flex-grow-1 ms-3 col-1">                    
+                        <img id="inpImg" class="rounded-3 mt-3 mx-auto d-block" style="width: 150px; height: 150px;" src="{{img.url}}" onerror="imageErrors()">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label for='email' class="col-sm-2 col-form-label">Email:</label>
+                        {{staff_form.email}}
+                    </div>
+                    <div class="col">
+                        <label for='phone' class="col-sm-2 col-form-label">Phone:</label>
+                        {{staff_form.phone}}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label id="img" for='img' class="col-sm-2 col-form-label">Image:</label>
+                        {{staff_form.img}}
+                      </div>
+                    <div class="col">
+                        <label for='roll' class="col-sm-2 col-form-label">Roll:</label>
+                        {{staff_form.roll}}
+                    </div>
+                </div>
+                <button type="submit" class="btn mt-3 mb-3 btn-primary" name="acc_btn">Edit</button>
+            </form>
+    </div>
+    <!-- End Account -->
+    <!-- Start Market -->
+    <div class="row">
+        <h3 class="mt-4">Market</h3>
+        <form class="border border-prime rounded mt-4 mb-3" action="{% url 'accounts:profile_staff_edit' mar_id %}" method="post"> 
+            {% csrf_token %}           
+            <div class="row">
+                <div class="col">
+                    <label for="InputMarketName" class="col-sm-2 col-form-label">MarketName:</label>
+                    {{market.market_name}}
+                </div>
+                <div class="col">                    
+                    <label for="InputAddress" class="col-sm-2 col-form-label">Address:</label>
+                    {{market.address}}
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="InputState" class="col-sm-2 col-form-label">State:</label>
+                    {{market.state}}
+                </div>
+                <div class="col">
+                    <label for="InputCity" class="col-sm-2 col-form-label">City:</label>
+                    {{market.city}}
+                </div>
+            </div>
+            <div class="row mt-2 mb-3">
+                <div class="col">
+                    <label for="InputPostalCode" class="col-sm-2 col-form-label">PostalCode:</label>
+                    {{market.postal_code}}
+                </div>
+                <div class="col">
+                    <label for="InputTelephone" class="col-sm-2 col-form-label">Telephone:</label>
+                    {{market.telephone}}
+                </div>
+            </div>
+            {% if read_only == None %}
+                <button type="submit" class="btn mb-3 btn-primary" name="mar_btn">Edit</button>
+            {% endif %}
+        </form>
+    </div>
+    <!-- End Market -->
+{% endblock main_content %}
+
+{% block extra_script %}
+    <script>
+        const loadImages = (event) => {
+        const files = event.target.files
+        if (files.length > 0) {
+            const imageUrl = URL.createObjectURL(files[0]);
+            const imageElement = document.getElementById('inpImg');
+            imageElement.src = imageUrl;
+        }
+        
+        }
+    </script>
+    <script>
+        const imageErrors = () => {
+            this.onerror=null; 
+            this.src="{% static 'images/profile/default.jpg' %}";
+        }
+    </script>
+{% endblock extra_script %}

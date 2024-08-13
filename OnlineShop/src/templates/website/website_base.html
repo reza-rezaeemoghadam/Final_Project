@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    
+    {% block extra_head_link %}
+    {% endblock extra_head_link %}
+    
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'main/assets/favicon.ico' %}" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'main/css/styles.css' %}" rel="stylesheet" />
+    <title>{% block page_title %}{% endblock %}</title>
+</head>
+<body>
+    <!-- Navigation -->
+    {% block navbar %}
+    {% include 'website/website_navbar.html' %}
+    {% endblock navbar %}
+    
+    <!-- Header -->
+    {% block header %}
+    {% endblock header %}
+    
+    <!-- Content -->
+    {% block content %}
+    {% endblock content %}
+    
+    <!-- Footer -->
+    {% block footer %}
+    {% include 'website/website_footer.html' %}
+    {% endblock footer %}
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{% static 'main/js/scripts.js' %}"></script>
+    {% block extra_script %}
+    {% endblock extra_script %}
+
+</body>
+</html>

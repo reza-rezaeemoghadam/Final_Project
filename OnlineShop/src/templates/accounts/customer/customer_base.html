@@ -1,0 +1,14 @@
+{% extends 'website/website_base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+<!-- Customer Profile Content -->
+    {% block main_content %}
+    {% endblock main_content %}
+
+    <!-- Customer Profile Sidebar -->
+    {% block sidebar %}
+        {% include 'accounts/customer/customer_sidebar.html' %}
+    {% endblock sidebar %}
+</div>
+{% endblock content %}

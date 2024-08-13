@@ -1,0 +1,32 @@
+{% extends 'accounts/customer/customer_base.html' %} 
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-7">
+    <div class="row">        
+        <h2 class="mb-4">Addresses</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+        {% for address in addresses %}
+        <div class="row-6 mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{address.state}}/{{address.city}}</h4>
+                    <p class="card-text">Address: {{address.address}}</p>
+                    <p class="card-text">Postal Code: {{address.postal_code}}</p>
+                    <a href="{% url 'customers:customer_address_edit' address.id %}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{% url 'customers:customer_address_delete' address.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-end">
+        <a href="{% url 'customers:customer_address_create' %}" class="btn btn-primary btn-sm mt-3 col-1 ">Add</a>
+    </div>
+</div>
+{% endblock main_content %}
