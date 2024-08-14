@@ -8,7 +8,7 @@ from django.contrib import messages
 from customers.forms import CustomerProfileForm, CustomerAddressForm
 # Importing Models
 from accounts.models import User, CustomerAddress
-
+from website.models import Comments
 # Create your views here.
 class ProfileView(View):
     template_name = "accounts/customer/customer_profile.html"
@@ -123,3 +123,9 @@ class AddressDeleteView(View):
             messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
         return redirect("customers:customer_address_list")
     
+class CommentListView(ListView):
+    template_name = "accounts/customer/customer_comment_list.html"
+    model = Comments
+    paginate_by = 10
+    context_object_name = "comments"
+         

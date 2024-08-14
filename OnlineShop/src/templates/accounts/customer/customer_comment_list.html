@@ -1,0 +1,50 @@
+{% extends 'accounts/customer/customer_base.html' %}
+
+{% load static %}
+
+    
+{% block extra_head_link %}
+{% endblock extra_head_link %}
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-7">
+    <div class="row">        
+        <h2 class="mb-4">Comments</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+            </div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Product</th>
+                <th scope="col">Title</th>
+                <th scope="col">Text</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments %}
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{{comment.product.product_name}}</td>
+                    <td>{{comment.title}}</td>
+                    <td>{{comment.text|truncatechars:20}}</td>
+                    <td>{{comment.date}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_script %}
+{% endblock extra_script %}

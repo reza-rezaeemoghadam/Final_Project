@@ -2,7 +2,8 @@ from django.urls import path
 
 from customers.views import (ProfileView, 
                              AddressListView, AddressCreateView, 
-                             AddressUpdateView, AddressDeleteView) 
+                             AddressUpdateView, AddressDeleteView,
+                             CommentListView) 
 
 app_name = 'customers'
 
@@ -14,6 +15,8 @@ urlpatterns = [
     path('address/delete/<int:pk>/',AddressDeleteView.as_view(), name="customer_address_delete"),
     path('order/',ProfileView.as_view(), name="customer_order"),
     path('order/detail/<int:pk>/',ProfileView.as_view(), name="customer_order_detail"),
-    path('comment/',ProfileView.as_view(), name="customer_comment"),
+    path('comment/',CommentListView.as_view(), name="customer_comment_list"),
+    path('comment/edit/<int:pk>',CommentListView.as_view(), name="customer_comment_edit"),
+    path('comment/delete/<int:pk>',CommentListView.as_view(), name="customer_comment_delete"),
     path('rate/',ProfileView.as_view(), name="customer_rate"),
 ]

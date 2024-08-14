@@ -37,6 +37,7 @@ class AddComment(forms.ModelForm):
         widgets = {
             'title':forms.TextInput(attrs={'class': 'form-control rounded','placeholder':'Enter a title'})
         }
+        
     def __init__(self, *args, **kwargs):
         super(AddComment, self).__init__(*args, **kwargs)
         self.fields['text'].widget = forms.Textarea(attrs={
