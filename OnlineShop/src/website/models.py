@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Avg
 
 from accounts.models import Customers, Staffs
 
@@ -48,8 +49,12 @@ class Products(models.Model):
     price = models.IntegerField()
     market = models.ManyToManyField(Markets, related_name='product')
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, related_name='product')
-    dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')    
+    dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')   
     
+    @property
+    def product_avg_rate(self) -> int:
+        return Ratings.objects.filter(product_id=self.id).aggregate(avg_rating=Avg('rate'))['avg_rating']
+        
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")
     display_order = models.SmallIntegerField()
@@ -59,6 +64,7 @@ class Ratings(models.Model):
     rate = models.SmallIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='rating')
     customer = models.ForeignKey(Customers, default='not found', on_delete=models.SET_DEFAULT, related_name='rating')
+
     
 class Comments(models.Model):
     title = models.CharField(max_length=100)

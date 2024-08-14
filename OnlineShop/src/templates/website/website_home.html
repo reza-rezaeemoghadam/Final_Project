@@ -1,8 +1,90 @@
 {% extends 'website/website_base.html' %}
 
+{% load custome_tags %}
+
 {% block header %}
 {% include 'website/website_header.html' %}
 {% endblock header %}
 
 {% block content %}
+<!-- Featured Sale Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-3">
+        <h4 class="fw-bold-2 pb-5">Featured Sale</h4>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for discount in discount_products %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Product image-->
+                    <img class="card-img-top" src={{discount.product.image.first.image.url}} alt="..." />
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">{{discount.product.product_name}}</h5>
+
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                {% if discount.product.product_avg_rate %}
+                                    {% numeric_loop discount.product.product_avg_rate as num_list %}
+                                    {% for num in num_list %}
+                                    <div class="bi-star-fill"></div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="bi-star"></div>
+                                {% endif %}
+                            </div>
+                            <!-- Product price-->
+                            ${{discount.product.price}}
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'website:product_detail' discount.product.id %}">View</a></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- Best Sales Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-3">
+        <h4 class="fw-bold pb-5">Best Sales</h4>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for product in most_sold_products %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Product image-->
+                    <img class="card-img-top" src={{product.image.first.image.url}} alt="..." />
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">{{product.product_name}}</h5>
+
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                {% if product.product_avg_rate %}
+                                {% numeric_loop product.product_avg_rate as num_list %}
+                                {% for num in num_list %}
+                                <div class="bi-star-fill"></div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="bi-star"></div>
+                                {% endif %}
+                            </div>
+                            <!-- Product price-->
+                            ${{product.price}}
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'website:product_detail' product.id %}">View</a></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 {% endblock content %}

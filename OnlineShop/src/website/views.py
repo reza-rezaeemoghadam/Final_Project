@@ -1,18 +1,34 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, TemplateView, DetailView
-
+from django.views.generic import View, DetailView
+from django.db.models import Sum
 
 # Importing Custome Forms
 from .forms import AddComment
 
 # Importing Custome Models
-from website.models import Products, Comments, ProductImages
-from accounts.models import User 
+from website.models import Products, Comments, ProductImages, Discounts
+from accounts.models import User
+from carts.models import Orders, OrderDetails 
 
 # Create your views here.
-class HomePageView(TemplateView):
+class HomePageView(View):
+    product_model = Products
+    order_detail_model =  OrderDetails
     template_name = 'website/website_home.html'
+    
+    def get_queryset(self):
+        # Top 8 sales
+        # product_quantities = OrderDetails.objects.values('product').annotate(total_quantity=Sum('quantity'))
+        # most_sold_product = product_quantities.order_by('-total_quantity')[:8]
+        # Top 8 Discount Products
+        discount_product = Discounts.objects.filter(expired=False).select_related('product')
+        # all Product
+        most_sold_product = self.product_model.objects.all()
+        return {'most_sold_products':most_sold_product, 'discount_products':discount_product}
 
+    def get(self, request):
+        return render(request, self.template_name, context=self.get_queryset())
+    
 class ProductDetailView(DetailView):
     model = Products
     comment_model = Comments
