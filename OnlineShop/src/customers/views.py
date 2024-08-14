@@ -75,8 +75,7 @@ class AddressCreateView(CreateView):
         except Exception as error:
                 messages.error(request, "An error occurred please check your entered info and if it occurred again contact support.")        
         return redirect(self.success_url)
-
-        
+       
 class AddressUpdateView(View):
     model = CustomerAddress
     template_name = "accounts/customer/customer_address.html"
