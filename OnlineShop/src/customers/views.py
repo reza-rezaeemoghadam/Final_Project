@@ -126,6 +126,6 @@ class AddressDeleteView(View):
 class CommentListView(ListView):
     template_name = "accounts/customer/customer_comment_list.html"
     model = Comments
-    paginate_by = 10
+    paginate_by = 1
     context_object_name = "comments"
          
