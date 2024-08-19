@@ -5,7 +5,7 @@
         <!-- Start Core -->
         <div class="sb-sidenav-menu-heading">Core</div>
         <!-- Start Profile -->
-        <a class="nav-link" href="{% url 'accounts:profile_staff'%}">
+        <a class="nav-link" href="{% url 'accounts:profile_staff' %}">
             <div class="sb-nav-link-icon">
                 <i class="fas fa-user-alt"></i>
             </div>
@@ -77,12 +77,40 @@
           data-bs-parent="#sidenavAccordion"
         >
           <nav class="sb-sidenav-menu-nested nav">
-            <a class="nav-link" href="layout-static.html">Add Product</a>
-            <a class="nav-link" href="layout-sidenav-light.html">Edit Product</a>
+            <a class="nav-link" href="{% url 'accounts:profile_staff_product' %}">Product</a>
+            <a class="nav-link" href="{% url 'accounts:profile_staff_product_create' %}">Add Product</a>
           </nav>
         </div>
         <!-- End Product Manager -->
         <!-- Start Discount -->
+        <a
+        class="nav-link collapsed"
+        href="#"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapseDiscounts"
+        aria-expanded="false"
+        aria-controls="collapseDiscounts"
+      >
+        <div class="sb-nav-link-icon">
+          <i class="fas fa-percent"></i>
+        </div>
+        Discount
+        <div class="sb-sidenav-collapse-arrow">
+          <i class="fas fa-angle-down"></i>
+        </div>
+      </a>
+      <div
+        class="collapse"
+        id="collapseDiscounts"
+        aria-labelledby="headingOne"
+        data-bs-parent="#sidenavAccordion"
+      >
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" href="{% url 'accounts:profile_staff_product' %}">Discounts</a>
+          <a class="nav-link" href="{% url 'accounts:profile_staff_product_create' %}">Add Discount</a>
+        </nav>
+      </div>
+      <!-- End of Discount -->
         <!-- End Managements -->
         <div class="sb-sidenav-menu-heading">Addons</div>
         <a class="nav-link" href="charts.html">
