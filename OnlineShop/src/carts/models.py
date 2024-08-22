@@ -5,7 +5,8 @@ from website.models import Products
 
 # Create your models here.
 class Carts(models.Model):
-    Customer = models.OneToOneField(Customers, related_name='cart', on_delete=models.CASCADE)
+    customer = models.OneToOneField(Customers, related_name='cart', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
 class CartDetails(models.Model):
     quantity = models.SmallIntegerField()
@@ -13,15 +14,24 @@ class CartDetails(models.Model):
     product = models.ForeignKey(Products, on_delete=models.DO_NOTHING)
 
 class Orders(models.Model):
-    date = models.DateTimeField()
+    SHIPMENT_STATUS = [
+        ("Processing","Processing"),
+        ("Delivering","Delivering"),
+        ("Delivered","Delivered"),
+        ("Returned","Returned")             
+    ]
+    
+    date = models.DateTimeField(auto_now_add=True, editable=True)
     total_paid = models.IntegerField()
-    shipment_status = models.CharField(max_length=20, default='در حال پردازش')
+    total_discount = models.IntegerField()
+    shipment_status = models.CharField(max_length=20, choices=SHIPMENT_STATUS, default='Processing')
     shipment_date = models.DateTimeField()
     customer = models.ForeignKey(Customers, on_delete=models.DO_NOTHING)
     address = models.ForeignKey(CustomerAddress, on_delete=models.DO_NOTHING)
 
 class OrderDetails(models.Model):
     quantity = models.IntegerField()
+    discount = models.IntegerField()
     price = models.IntegerField()
     order = models.ForeignKey(Orders, on_delete=models.PROTECT, related_name="order_details")
     product = models.ForeignKey(Products, on_delete=models.RESTRICT)

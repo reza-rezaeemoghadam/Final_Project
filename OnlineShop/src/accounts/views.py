@@ -147,7 +147,7 @@ class StaffProfileView(View):
                 edited_form = self.market_form(request.POST, instance=instance)
                 messages.success(request,'Address info successfully edited.')  
             elif 'acc_btn' in request.POST:
-                instance = self.staff_model.objects.filter(pk=request.user.id).first()
+                instance = self.staff_model.objects.filter(id=request.user.id).first()
                 edited_form = self.staff_form(request.POST, instance=instance)
             if edited_form.is_valid():
                 edited_form.save()  

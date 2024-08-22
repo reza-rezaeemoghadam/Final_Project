@@ -37,10 +37,10 @@ class AddressListView(ListView):
     context_object_name = 'addresses'
     model = CustomerAddress
     
-    def get_qeuryset(self):
+    def get_queryset(self):
         user_id = self.request.user.id
-        print(self.model.objects.filter(customer_id = user_id))
-        return self.model.objects.filter(customer_id = user_id)
+        query = self.model.objects.filter(customer__id = user_id)
+        return query
 
 class AddressCreateView(CreateView):
     model_class = CustomerAddress

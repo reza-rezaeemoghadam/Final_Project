@@ -34,7 +34,7 @@ class Discounts(models.Model):
         ('value', 'Value'),
     ]
     dis_code = models.CharField(max_length=32, unique=True)
-    dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="Percentage")
+    dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="percentage")
     dis_amount = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -54,6 +54,12 @@ class Products(models.Model):
     @property
     def product_avg_rate(self) -> int:
         return Ratings.objects.filter(product_id=self.id).aggregate(avg_rating=Avg('rate'))['avg_rating']
+    
+    def discount_calculation(self):
+        if self.dicount.dis_type == 'percentage':
+            return (self.price * (self.dicount.dis_amount/100))
+        elif self.dicount.dis_type == 'value':
+            return 0
         
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")

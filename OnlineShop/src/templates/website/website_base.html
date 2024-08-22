@@ -37,14 +37,32 @@
     {% include 'website/website_footer.html' %}
     {% endblock footer %}
 
+    
+    {% block extra_script %}
+    {% endblock extra_script %}
+
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core theme JS-->
     <script src="{% static 'main/js/scripts.js' %}"></script>
     
-    {% block extra_script %}
-    {% endblock extra_script %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <script>
+        $(document).ready(function () {  
+        const counterBadge = $("#cartBadgeCounter");  
+        $.ajax({
+            url: "{% url 'get_cart_count' %}",
+            method: "GET",
+            success: function(res){
+                counterBadge.text(res['cart_count'])
+            },
+            error: function(){
+             alert("error!");
+            }
+            });})
+    </script>
 
 </body>
 </html>

@@ -18,11 +18,11 @@
                 <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
             </ul>
             <form class="d-flex">
-                <button class="btn btn-outline-dark" type="submit">
+                <a class="btn btn-outline-dark" type="submit" href="{% url 'carts:cart_list' %}">
                     <i class="bi-cart-fill me-1"></i>
                     Cart
-                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                </button>
+                    <span id="cartBadgeCounter" class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                </a>
             </form>
             <ul class="navbar-nav mb-2 mb-lg-1 ms-lg-4">
                 {% if request.user.is_authenticated == False %}

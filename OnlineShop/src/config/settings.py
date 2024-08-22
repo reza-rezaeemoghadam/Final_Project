@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'vendors',
     'website',
     # Third-party applications
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

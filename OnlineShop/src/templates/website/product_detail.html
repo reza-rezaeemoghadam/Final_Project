@@ -43,8 +43,8 @@
                         </div>
                         <p class="lead">{{product.description}}</p>
                         <div class="d-flex">
-                            <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                            <input id="countItem" class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                            <button id="addToCart" class="btn btn-outline-dark flex-shrink-0" type="button" onclick="addToCart('{{product.id}}')">
                                 <i class="bi-cart-fill me-1"></i>
                                 Add to cart
                             </button>
@@ -178,7 +178,7 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">Add to cart</a></div>
                             </div>
                         </div>
                     </div>
@@ -222,5 +222,22 @@
         $('.carousel').carousel({
         interval: 5000
         })
+</script>
+<script>
+    function addToCart(pk) {
+    const count = document.getElementById('countItem').value;
+    const counterBadge = $("#cartBadgeCounter");
+    $.ajax({
+        url: "{% url 'add_to_cart' %}",
+        method: "POST",
+        data: {pk:pk,count:count},
+        success: function(res){
+            counterBadge.text(res['cart_count'])
+        },
+        error: function(){
+         alert("error!");
+        }
+        });
+    }
 </script>
 {% endblock extra_script %}
