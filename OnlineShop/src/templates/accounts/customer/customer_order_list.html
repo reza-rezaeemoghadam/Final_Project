@@ -1,0 +1,88 @@
+{% extends 'accounts/customer/customer_base.html' %}
+
+{% load static %}
+
+    
+{% block extra_head_link %}
+{% endblock extra_head_link %}
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-9">
+    <div class="row">        
+        <h2 class="mb-4">Orders</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+            </div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Total Paid</th>
+                <th scope="col">address</th>
+                <th scope="col">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{order.id}}</td>
+                    <td>{{order.date}}</td>
+                    <td>{{order.shipment_status}}</td>
+                    <td>{{order.total_paid}}</td>
+                    <td>{{order.address.address|truncatechars:20}}</td>
+                    <td><a class="text-reset text-decoration-none" href="{% url 'customers:customer_order_detail' order.id %}">Detail</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+          <!-- Pagination -->
+          <div class="row">
+            <nav aria-label="Page navigation example">
+                {% if is_paginated %}
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                      >&laquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#">&laquo;</a>
+                  </li>
+                  {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                  <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                  {% else %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  </li>
+                  {% endif %} {% endfor %} {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a href="?page={{page_obj.next_page_number}}" class="page-link"
+                      >&raquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                  </li>
+                  {% endif %}
+                </ul>
+                {% endif %}
+              </nav>
+          </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_script %}
+{% endblock extra_script %}
