@@ -2,8 +2,10 @@ from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
 
+# Importing Custome Model
 from accounts.models import Customers, Staffs
-from website.models import Markets
+from website.models import Markets, Products, ProductImages, Discounts
+
 # Customize Forms
 class CustomerRegisterForm(forms.Form):
     MODEL = Customers
@@ -134,14 +136,14 @@ class StaffProfileForm(forms.ModelForm):
                                                               'readonly':'readonly'}))  
     phone = forms.CharField(required=True,
                             widget=forms.TextInput(attrs={'class': "form-control mt-1",
-                                                              'placeholder':'Enter your phone'}))  
+                                                          'placeholder':'Enter your phone'}))  
     img = forms.ImageField(required=True,
                            widget=forms.FileInput(attrs={'class':"form-control",
-                                                        'onchange':"loadImages(event)"}))
+                                                         'onchange':"loadImages(event)"}))
     roll = forms.CharField(required=True,
                             widget=forms.TextInput(attrs={'class': "form-control mt-1",
-                                                              'placeholder':'Enter your roll',
-                                                              'readonly':'readonly'}))  
+                                                          'placeholder':'Enter your roll',
+                                                          'readonly':'readonly'}))  
     class Meta:
         model = Staffs
         fields = ['first_name','last_name','email','phone','img','roll']
@@ -175,5 +177,35 @@ class MarketEditForm(forms.ModelForm):
         model = Markets
         fields = ['market_name', 'address', 'state', 'city', 'postal_code', 'telephone']
     
+
+class ProductImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductImages
+        fields = ['image']
+        widgets = {
+            'image' : forms.FileInput(attrs={'class': "form-control mt-1" , 'name': 'images', 'id': 'images', 'multiple': True}),
+        }       
     
-    
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Products
+        fields = ['product_name', 'category', 'quantity', 'description', 'price', 'dicount']
+        widgets = {
+            'product_name' : forms.TextInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter product name'}),
+            'quantity' : forms.NumberInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter quantity'}),
+            'description' : forms.Textarea(attrs={'class': "form-control mt-1", 'placeholder':'Enter description'}),
+            'category' : forms.Select(attrs={'class': "form-control mt-1"}),
+            'price' : forms.NumberInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter price'}),
+            'dicount' : forms.Select(attrs={'class': "form-control mt-1"}),
+        }
+
+class DiscountForm(forms.ModelForm):
+    class Meta:
+        model = Discounts   
+        fields = ['dis_type', 'dis_amount', 'start_date', 'end_date']
+        widgets = {
+            'dis_type' : forms.Select(attrs={'class': "form-control mt-1"}),
+            'dis_amount' : forms.NumberInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter the discount amount '}),
+            'start_date' : forms.DateInput(attrs={'class': "form-control mt-1"}),
+            'end_date' : forms.DateInput(attrs={'class': "form-control mt-1"}),                
+        }

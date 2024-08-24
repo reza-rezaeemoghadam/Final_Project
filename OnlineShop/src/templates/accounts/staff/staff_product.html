@@ -1,0 +1,68 @@
+{% extends 'accounts/staff/staff_base.html' %}
+
+{% load custome_tags %}
+
+{% block main_title %}
+<h1 class="mt-4">Products</h1>
+{% endblock main_title %}
+
+{% block main_breadcrumb %}
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard_staff' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'accounts:profile_staff_product' %}">Products</a></li>
+    <li class="breadcrumb-item active">Add</li>
+</ol>
+{% endblock main_breadcrumb%}
+
+{% block main_content %}
+    {% block message %}
+        {% include 'message/message.html' %}
+    {% endblock message %}
+    <!-- Product Section -->
+    <section class="py-5">
+        <form class="border border-prime rounded mt-4 col-12" enctype="multipart/form-data" action="{% url 'accounts:profile_staff_product_create' %}" method="post" >
+            {% csrf_token %}   
+            <h5 class = "mt-2 px-3 py-2"> Product </h5>          
+            <div class="row mt-2 px-3 py-2">
+                <div class="col">
+                    <label for='product_name' class="col-sm col-form-label">Product Name:</label>
+                    {{form.product_name}}
+                </div>
+                <div class="col">
+                <label for='quantity' class="col-sm col-form-label">Quantity:</label>
+                    {{form.quantity}}
+                </div>
+            </div>
+            <div class="row mt-2  px-3 py-2">
+                <div class="col">
+                    <label for='description' class="col-sm-2 col-form-label">Description:</label>
+                    {{form.description}}
+                </div>
+                <div class="col">
+                    <div class="d-flex flex-column">
+                        <div class="p-2">
+                            <label for='price' class="col-sm-2 col-form-label">Price:</label>
+                            {{form.price}}
+                        </div>                        
+                        <div class="p-2">
+                            <label for='category' class="col-sm-2 col-form-label">Category:</label>
+                            {{form.category}}
+                        </div>  
+                        <div class="p-2">
+                            <label for='price' class="col-sm-2 col-form-label">Discount:</label>
+                            {{form.dicount}}
+                        </div>                        
+                    </div>
+            </div>
+            <div class="row mt-2 px-3 py-2">
+                <div class="p-2">
+                    <label for='images' class="col-sm-2 col-form-label">Images:</label>
+                    {{image_form.image}}
+                </div>  
+            </div>
+            <div class="row mt-2 px-3 py-2">
+                <button type="submit" class="btn mt-3 mb-3 btn-primary">Submit</button>
+            </div>
+        </form>
+    </section> 
+{% endblock main_content%}

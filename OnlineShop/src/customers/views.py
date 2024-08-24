@@ -8,7 +8,7 @@ from django.contrib import messages
 from customers.forms import CustomerProfileForm, CustomerAddressForm
 # Importing Models
 from accounts.models import User, CustomerAddress
-
+from website.models import Comments
 # Create your views here.
 class ProfileView(View):
     template_name = "accounts/customer/customer_profile.html"
@@ -37,10 +37,10 @@ class AddressListView(ListView):
     context_object_name = 'addresses'
     model = CustomerAddress
     
-    def get_qeuryset(self):
+    def get_queryset(self):
         user_id = self.request.user.id
-        print(self.model.objects.filter(customer_id = user_id))
-        return self.model.objects.filter(customer_id = user_id)
+        query = self.model.objects.filter(customer__id = user_id)
+        return query
 
 class AddressCreateView(CreateView):
     model_class = CustomerAddress
@@ -75,8 +75,7 @@ class AddressCreateView(CreateView):
         except Exception as error:
                 messages.error(request, "An error occurred please check your entered info and if it occurred again contact support.")        
         return redirect(self.success_url)
-
-        
+       
 class AddressUpdateView(View):
     model = CustomerAddress
     template_name = "accounts/customer/customer_address.html"
@@ -124,3 +123,9 @@ class AddressDeleteView(View):
             messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
         return redirect("customers:customer_address_list")
     
+class CommentListView(ListView):
+    template_name = "accounts/customer/customer_comment_list.html"
+    model = Comments
+    paginate_by = 1
+    context_object_name = "comments"
+         

@@ -1,0 +1,77 @@
+{% extends 'website/website_base.html' %}
+
+{% block extra_head_link %}
+<style>
+    textarea {width: 600px; height:150px;}
+</style>
+{% endblock extra_head_link %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <!-- Product  -->
+            <div class="col-md-4">
+                <div class="col mb-5 pt-5">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src={{image.image.url}} alt="image not found" />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">{{product.product_name}}</h5>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">${{product.price}}</span>
+                                $50.50
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add Comment  -->
+            <div class="col-md-8">
+                <div class="container px-4 px-lg-3 mt-3 mb-5">
+                    <h2>Comment</h2>
+                    <section class="pt-3">
+                          <div class="row d-flex justify-content-center">
+                            <div class="row">
+                              <div class="card">
+                                <div class="card-body p-4">
+                                  <div class="d-flex flex-start w-100">
+                                    <img class="rounded-circle shadow-1-strong me-3" src="{{request.user.img.url}}" alt="avatar" width="65" height="65" />
+                                    <div class="w-100">
+                                        <h5>Add your comment</h5>
+                                        <form action="{% url 'website:product_comment_create' product.id %}" method="post">   
+                                            {% csrf_token %}                                       
+                                            <div class="form-outline">
+                                                {{comment_form.title}}
+                                            </div>
+                                            <div class="form-outline mt-1">
+                                                {{comment_form.text}}
+                                                <label class="form-label" for="textAreaExample">What is your view?</label>
+                                            </div>
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <button  type="submit" class="btn btn-danger">Send</i>
+                                                </button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
