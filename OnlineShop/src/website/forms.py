@@ -1,9 +1,8 @@
 from django import forms
 
-from website.models import Markets
+from website.models import Markets, Comments
 
 class MarketForm(forms.ModelForm):
-    
     market_name = forms.CharField(max_length=100,
                                   required=True,
                                   label="Market Name",
@@ -30,3 +29,18 @@ class MarketForm(forms.ModelForm):
     class Meta:
         model = Markets
         fields = ['market_name', 'address', 'state', 'city', 'postal_code']
+        
+class AddComment(forms.ModelForm):
+    class Meta:
+        model = Comments   
+        fields = ['title','text']     
+        widgets = {
+            'title':forms.TextInput(attrs={'class': 'form-control rounded','placeholder':'Enter a title'})
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super(AddComment, self).__init__(*args, **kwargs)
+        self.fields['text'].widget = forms.Textarea(attrs={
+            'class': 'form-control rounded',
+            'id': 'textAreaExample',
+            'row':'4'})

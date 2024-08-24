@@ -1,17 +1,19 @@
 # Importing needed Django built-in modules 
+from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.views.generic import View, FormView, TemplateView
+from django.views.generic import View, FormView, TemplateView, ListView, CreateView
+from django.views.generic.edit import DeleteView 
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages 
 
 # Importing Custome Forms
-from accounts.forms import (CustomerRegisterForm, StaffRegisterForm,
-                            LoginForm, StaffProfileForm, MarketEditForm) 
+from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
+                            LoginForm, StaffProfileForm, MarketEditForm, DiscountForm) 
 from website.forms import MarketForm
 
 # Importing Models
-from website.models import StaffMarkets, Markets
+from website.models import StaffMarkets, Markets, Products, ProductImages
 from accounts.models import User
 
 # Create your views here.
@@ -134,7 +136,7 @@ class StaffProfileView(View):
             context = {'staff_form': self.staff_form(initial=data.staff.__dict__),
                        'market':self.market_form(initial=data.market.__dict__),
                        'img':data.staff.img,
-                       'read_only': True}
+                       'read_only': True}     
         return render(request, self.template_name, context=context)
     
     def post(self, request, pk):
@@ -145,7 +147,7 @@ class StaffProfileView(View):
                 edited_form = self.market_form(request.POST, instance=instance)
                 messages.success(request,'Address info successfully edited.')  
             elif 'acc_btn' in request.POST:
-                instance = self.staff_model.objects.filter(pk=request.user.id).first()
+                instance = self.staff_model.objects.filter(id=request.user.id).first()
                 edited_form = self.staff_form(request.POST, instance=instance)
             if edited_form.is_valid():
                 edited_form.save()  
@@ -159,3 +161,92 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('website:home_page') 
+    
+class ProductListView(ListView):
+    model = Products    
+    template_name = 'accounts/staff/staff_product_list.html'
+    context_object_name = "products"
+    paginate_by = 8
+    
+class ProductAddView(CreateView):    
+    model = Products
+    image_model = ProductImages
+    success_url = "accounts:profile_staff_product_create"
+    form_class = ProductForm
+    image_form = ProductImageForm
+    template_name = "accounts/staff/staff_product.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super(ProductAddView, self).get_context_data(**kwargs)
+        context["product_form"] = self.form_class
+        context["image_form"] = self.image_form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            product_form = self.form_class(request.POST)
+            images = self.request.FILES.getlist('image')
+            if product_form.is_valid() :
+                self.form_valid(product_form, images)
+            messages.success(request, "Product added successfully")
+        except Exception as error:
+            messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
+        return redirect(reverse(self.success_url))
+        
+    def form_valid(self, product_form, images):
+            counter = 0
+            created_by = User.objects.get(id = self.request.user.id )
+            market = StaffMarkets.objects.get(staff = created_by).market
+            product = product_form.save()
+            product.market.add(market)
+            for image in images:
+                counter += 1            
+                instance = self.image_model(product=product, image=image, display_order=counter)
+                instance.save()
+                
+class ProductEditView(View):
+    model = Products
+    image_model = ProductImages
+    template_name = "accounts/staff/staff_product_update.html"
+    success_url = "accounts:profile_staff_product"
+    form_class = ProductForm
+    image_form = ProductImageForm
+    
+    def get(self, request, pk):
+        product = self.model.objects.get(id = pk)
+        product_form = self.form_class(initial=product.__dict__)
+        context = {'form':product_form , 'image_form' : self.image_form , 'product':product}
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request, pk):
+        instance = self.model.objects.get(id = pk)
+        new_images = images = self.request.FILES.getlist('image')
+        counter = len(new_images)
+        edited_form = self.form_class(request.POST, instance=instance)
+        product = edited_form.save()
+        for image in images:
+            counter += 1            
+            instance = self.image_model(product=product, image=image, display_order=counter)
+            instance.save()
+        return redirect(self.success_url)
+        
+class ProductDeleteView(View):
+    model = Products
+    success_message = "Product deleted successfully."
+    success_url = "accounts:profile_staff_product"
+    
+    def get(self, request, pk):
+        self.model.objects.get(id = pk).delete()
+        messages.success(self.request, self.success_message)
+        return redirect(self.success_url)
+    
+class DeleteImageView(View):
+    model = ProductImages   
+    success_url = "accounts:profile_staff_product_edit"
+    
+    def post(self, request):
+        image_id = request.POST.get('image')
+        product_id = request.POST.get('product')
+        self.model.objects.get(id = image_id).delete()
+        return redirect(self.success_url, pk=product_id)
+    

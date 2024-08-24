@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Avg
 
 from accounts.models import Customers, Staffs
 
@@ -25,7 +26,7 @@ class StaffMarkets(models.Model):
     
 class Categories(models.Model):
     title = models.CharField(max_length=60)
-    parent = models.ForeignKey('Categories', on_delete=models.CASCADE)
+    parent = models.ForeignKey('Categories', null=True, blank=True, on_delete=models.CASCADE)
 
 class Discounts(models.Model):
     DISCOUNT_TYPES = [
@@ -33,7 +34,7 @@ class Discounts(models.Model):
         ('value', 'Value'),
     ]
     dis_code = models.CharField(max_length=32, unique=True)
-    dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="Percentage")
+    dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="percentage")
     dis_amount = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -44,24 +45,37 @@ class Discounts(models.Model):
 class Products(models.Model):
     product_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
-    discription = models.TextField()
+    description = models.TextField()
+    price = models.IntegerField()
     market = models.ManyToManyField(Markets, related_name='product')
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, related_name='product')
-    dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')    
+    dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')   
     
+    @property
+    def product_avg_rate(self) -> int:
+        return Ratings.objects.filter(product_id=self.id).aggregate(avg_rating=Avg('rate'))['avg_rating']
+    
+    def discount_calculation(self):
+        if self.dicount.dis_type == 'percentage':
+            return (self.price * (self.dicount.dis_amount/100))
+        elif self.dicount.dis_type == 'value':
+            return 0
+        
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")
+    display_order = models.SmallIntegerField()
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="image")
 
 class Ratings(models.Model):
     rate = models.SmallIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='rating')
     customer = models.ForeignKey(Customers, default='not found', on_delete=models.SET_DEFAULT, related_name='rating')
+
     
 class Comments(models.Model):
     title = models.CharField(max_length=100)
     date = models.DateField(auto_now_add=True)   
     text = models.TextField()
-    parent = models.ForeignKey('Comments', on_delete=models.CASCADE)
+    parent = models.ForeignKey('Comments', null=True, blank=True, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='comment')
     customer = models.ForeignKey(Customers, default='not found', on_delete=models.SET_DEFAULT, related_name='comment')     

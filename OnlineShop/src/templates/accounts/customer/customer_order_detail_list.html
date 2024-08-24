@@ -1,0 +1,97 @@
+{% extends 'accounts/customer/customer_base.html' %}
+
+{% load static %}
+    
+{% block extra_head_link %}
+{% endblock extra_head_link %}
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-10">
+    <div class="row">        
+        <h2 class="mb-4">Items</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+            </div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Product</th>
+                <th scope="col">Price</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for detail in order_details %}
+                <tr>    
+                  <td class="text-center">  
+                    <img src={{detail.product.image.all.0.image.url}} class="img-fluid rounded-3" style="height: 100px; width: 150px;">
+                  </td>
+                  <td class="text-center">{{detail.product.product_name}}</td>
+                  <td class="text-center">{{detail.price}}</td>
+                  <td class="text-center">{{detail.discount}}</td>
+                  <td class="text-center">{{detail.quantity}}</td>
+                  <td class="text-center">
+                    <input id="form1" max="5" min="0" name="quantity" value="" type="number" class="form-control form-control-sm" />
+
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                    <button class></button>
+                  </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+          <!-- Pagination -->
+          <div class="row">
+            <nav aria-label="Page navigation example">
+                {% if is_paginated %}
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                      >&laquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#">&laquo;</a>
+                  </li>
+                  {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                  <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                  {% else %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  </li>
+                  {% endif %} {% endfor %} {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a href="?page={{page_obj.next_page_number}}" class="page-link"
+                      >&raquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                  </li>
+                  {% endif %}
+                </ul>
+                {% endif %}
+              </nav>
+          </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_script %}
+{% endblock extra_script %}

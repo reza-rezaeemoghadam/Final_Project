@@ -1,0 +1,84 @@
+{% extends 'accounts/customer/customer_base.html' %}
+
+{% load static %}
+
+    
+{% block extra_head_link %}
+{% endblock extra_head_link %}
+
+{% block main_content %}
+<div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-7">
+    <div class="row">        
+        <h2 class="mb-4">Comments</h2>
+    </div>
+    <div class="row">
+        {% block message %}
+        {% include 'message/message.html' %}
+        {% endblock message %}
+    </div>
+    <div class="row">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+            </div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Title</th>
+                <th scope="col">Text</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments %}
+                <tr>
+                    <td>{{comment.product.product_name}}</td>
+                    <td>{{comment.title}}</td>
+                    <td>{{comment.text|truncatechars:20}}</td>
+                    <td>{{comment.date}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+          <!-- Pagination -->
+          <div class="row">
+            <nav aria-label="Page navigation example">
+                {% if is_paginated %}
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                      >&laquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#">&laquo;</a>
+                  </li>
+                  {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                  <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                  {% else %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  </li>
+                  {% endif %} {% endfor %} {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a href="?page={{page_obj.next_page_number}}" class="page-link"
+                      >&raquo;</a
+                    >
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                  </li>
+                  {% endif %}
+                </ul>
+                {% endif %}
+              </nav>
+          </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_script %}
+{% endblock extra_script %}
