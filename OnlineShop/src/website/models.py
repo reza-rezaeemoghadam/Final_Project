@@ -60,7 +60,7 @@ class Products(models.Model):
             return (self.price * (self.dicount.dis_amount/100))
         elif self.dicount.dis_type == 'value':
             return 0
-        
+                
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")
     display_order = models.SmallIntegerField()
@@ -71,6 +71,12 @@ class Ratings(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='rating')
     customer = models.ForeignKey(Customers, default='not found', on_delete=models.SET_DEFAULT, related_name='rating')
 
+    @classmethod
+    def get_product_rate(cls, product_obj, customer_id):
+        rate_val = cls.objects.filter(product=product_obj, customer__id = customer_id).first()
+        if rate_val:
+            return rate_val.rate
+        return 0
     
 class Comments(models.Model):
     title = models.CharField(max_length=100)

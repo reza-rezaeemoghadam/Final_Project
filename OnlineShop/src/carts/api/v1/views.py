@@ -32,8 +32,6 @@ class AddToCartAPIView(APIView):
         pk = request.POST.get('pk')
         count = int(request.POST.get('count'))
         product = self.model.objects.get(id=pk)
-        print(count)
-        print(product.quantity)
         if count < product.quantity:
             cart = get_cart(request)
             pk = pk
@@ -171,9 +169,6 @@ class SubmitOrderAPIView(APIView):
         self.clear_cookie(response)
         return response
             
-                                   
-                           
-
 class CustomerAddressesAPIView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddressSerializer

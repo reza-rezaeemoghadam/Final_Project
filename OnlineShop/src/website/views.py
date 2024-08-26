@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView
-from django.db.models import Sum
 
 # Importing Custome Forms
 from .forms import AddComment

@@ -1,7 +1,8 @@
 {% extends 'accounts/customer/customer_base.html' %}
 
 {% load static %}
-    
+{% load customer_tags %}    
+
 {% block extra_head_link %}
 {% endblock extra_head_link %}
 
@@ -33,21 +34,18 @@
             <tbody>
                 {% for detail in order_details %}
                 <tr>    
-                  <td class="text-center">  
+                  <td class="text-center" style="width: 200px;">  
                     <img src={{detail.product.image.all.0.image.url}} class="img-fluid rounded-3" style="height: 100px; width: 150px;">
                   </td>
                   <td class="text-center">{{detail.product.product_name}}</td>
                   <td class="text-center">{{detail.price}}</td>
                   <td class="text-center">{{detail.discount}}</td>
                   <td class="text-center">{{detail.quantity}}</td>
-                  <td class="text-center">
-                    <input id="form1" max="5" min="0" name="quantity" value="" type="number" class="form-control form-control-sm" />
-
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                    <button class></button>
+                  <td class="text-center" style="width: 150px;">
+                    <div class=" text-center d-flex">
+                      <input id="rateInp" max="5" min="0" name="quantity" data-pk={{detail.product.id}} type="number" value="{% customer_rate detail.product request.user.id %}" class="form-control ms-1 rateInp" style="width: 50;" />                      
+                      <a class="ms-3 addRate" id="addRate"><i class="fas bi-check-lg"></i></a>
+                    </div>
                   </td>
                 </tr>
                 {% endfor %}
@@ -94,4 +92,39 @@
 {% endblock main_content %}
 
 {% block extra_script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  $(".addRate").click(function(){
+    const rateInpElem = $(".rateInp") 
+    const rate = rateInpElem.val()
+    const productID = rateInpElem.data('pk')
+    $.ajax({ 
+      url :"{% url 'rate-detail' 0 %}",
+      type : 'GET',
+      data: {product_id:productID},
+      success: function(data){
+        if (Object.keys(data).length === 0){
+          $.ajax({
+            url: "{% url 'rate-list' %}",
+            method: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', rate:rate, product_id:productID},
+            success: function(response){
+              console.log("sucessfully Created")
+            }
+          })
+          
+        } else {
+          $.ajax({
+            url: "{% url 'rate_update' %}",
+            method: "PATCH",
+            data: {rate:rate, product_id:productID},
+            success: function(response){
+              console.log("sucessfully Updated")
+            }
+          })
+      }    
+      }
+    })
+  })
+</script>
 {% endblock extra_script %}

@@ -26,7 +26,8 @@ urlpatterns = [
     path('customers/', include('customers.urls')),
     path('cart/', include('carts.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/', include('carts.api.v1.urls'))
+    path('api/v1/cart/', include('carts.api.v1.urls')),
+    path('api/v1/customer/', include('customers.api.v1.urls')),
 ]
 
 if settings.DEBUG:
