@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, DetailView
-
+from django.views.generic import View, DetailView, ListView
+from django.db.models import Sum, Avg
 # Importing Custome Forms
 from .forms import AddComment
 
 # Importing Custome Models
-from website.models import Products, Comments, ProductImages, Discounts
+from website.models import Products, Comments, ProductImages, Discounts, Markets
 from accounts.models import User
 from carts.models import Orders, OrderDetails 
 
@@ -61,3 +61,35 @@ class AddCommentView(View):
             comment.product = self.product_model.objects.get(id =pk)
             comment.save()
             return redirect('website:product_detail', pk=pk)
+        
+        
+class ShopView(ListView):
+    model = Markets
+    context_object_name = 'shops'
+    template_name = 'website/shop_page.html'    
+    paginate_by = 2
+    
+    def get_queryset(self):
+        order_type = self.request.GET.get('Type')
+        if order_type == 'asc':
+            order_type = '+'
+        else:
+            order_type = '-'
+            
+        sort_by = self.request.GET.get('sortBy')
+        match sort_by:
+            case 'date':
+                return self.model.objects.all().order_by(f"{order_type}created_at")
+            case 'highest_score':
+                markets_with_avg_rating = Markets.objects.annotate(avg_product_rating=Avg('product__rating__rate'))
+                return markets_with_avg_rating
+            case 'most_sell':
+                markets_with_sales = Markets.objects.annotate(total_quantity_sold=Sum('product__orderdetails__quantity')).order_by(f"{order_type}total_quantity_sold")                
+                return markets_with_sales
+            case _: 
+                return self.model.objects.all()
+
+
+class ShopProductView(ListView):
+    pass
+        

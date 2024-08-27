@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Avg
+from django.utils import timezone
 
 from accounts.models import Customers, Staffs
 
@@ -12,10 +13,19 @@ class Markets(models.Model):
     city = models.CharField(max_length=30)
     postal_code = models.CharField(max_length=20)
     telephone = models.CharField(max_length=15, null=True, blank=True)
-
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    
     class Meta:
         verbose_name = "فروشگاه"
         verbose_name_plural = "فروشگاها"
+        
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Markets, self).save(*args, **kwargs)        
         
     def __str__(self):
         return f"{self.market_name}--{self.address}"
