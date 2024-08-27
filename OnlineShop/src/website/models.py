@@ -24,7 +24,7 @@ class Markets(models.Model):
         ''' On save, update timestamps '''
         if not self.id:
             self.created = timezone.now()
-        self.modified = timezone.now()
+        self.updated_at = timezone.now()
         return super(Markets, self).save(*args, **kwargs)        
         
     def __str__(self):
@@ -60,6 +60,8 @@ class Products(models.Model):
     market = models.ManyToManyField(Markets, related_name='product')
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, related_name='product')
     dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')   
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
     
     @property
     def product_avg_rate(self) -> int:
@@ -70,6 +72,13 @@ class Products(models.Model):
             return (self.price * (self.dicount.dis_amount/100))
         elif self.dicount.dis_type == 'value':
             return 0
+    
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.updated_at = timezone.now()
+        return super(Products, self).save(*args, **kwargs)   
                 
 class ProductImages(models.Model): 
     image = models.ImageField(upload_to="images/product/", default="images/product/default.jpg")
