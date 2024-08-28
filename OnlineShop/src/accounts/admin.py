@@ -9,10 +9,17 @@ from .models import Customers,Staffs,CustomerAddress
 # Register your models here.
 @admin.register(Staffs)
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'email','roll', 'is_active']
+    list_display = ['full_name', 'email', 'roll', 'view_market_change_page', 'is_active']
     search_fields = ['first_name', 'last_name']
     list_filter = ['is_active', 'roll', 'date_joined']
     list_per_page = 10
+    
+    def view_market_change_page(self, obj):
+        if obj.market:
+            url = (
+                reverse("admin:website_markets_change", args=[obj.market])
+            )
+        return format_html('<a href="{}">{}</a>', url, obj.market.market.market_name)
     
     # We could have written this inside the model
     # but i've done it just for practice
@@ -22,6 +29,7 @@ class StaffAdmin(admin.ModelAdmin):
         return f"{obj.first_name} {obj.last_name}"
     
     full_name.short_description = "name" 
+    view_market_change_page.short_description = "market"
     
 @admin.register(Customers)
 class CustomerAdmin(admin.ModelAdmin):
