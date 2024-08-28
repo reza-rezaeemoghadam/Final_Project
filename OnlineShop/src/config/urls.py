@@ -30,6 +30,10 @@ urlpatterns = [
     path('api/v1/customer/', include('customers.api.v1.urls')),
 ]
 
+admin.site.site_header = "Echo Shop Adminstration Page"
+admin.site.site_title = "Echo|Admin Panel"
+admin.site.index_title = "Welcome to the Echo Shop Adminstration Panel"
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import BaseUserManager, AbstractUser, PermissionsMixin
 from django .utils.translation import gettext_lazy as _
+from django.contrib import admin
+from django.template.defaultfilters import truncatechars 
 from django.db import models
 
 
@@ -39,6 +41,7 @@ class User(AbstractUser, PermissionsMixin):
         ("Operator","Operator"),
         ("Customer","Customer")             
     ]
+    
     username = models.CharField(max_length=150, null=True)
     email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=16, null=True, blank=True)
@@ -64,32 +67,34 @@ class User(AbstractUser, PermissionsMixin):
     def get_profile_url(self):
         return "/profile/"
     
-
 class Staffs(User):
     class Meta:
         proxy = True
+        verbose_name = "Staff"
+        verbose_name_plural = "Staffs"
     
     def get_profile_url(self):
         return "/staff/dashboard/"
     
-    #TODO: setting permissions on staffs
-    def __set_permission(self, roll:str) -> None:
-        """ Setting permissions base on staffs roll"""
-        pass
-    
     def save(self, *args, **kwargs) -> None:
         self.is_staff = True
         super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.first_name}--{self.last_name}"
         
-
 class Customers(User):
     class Meta:
         proxy = True
-        
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
+                
     def get_profile_url(self) -> str:
         return "/customer/dashboard/"
-    
-        
+
+    def __str__(self):
+        return f"{self.first_name}--{self.last_name}"    
+         
 class CustomerAddress(models.Model):
     address = models.TextField()
     state = models.CharField(max_length=30)
@@ -98,8 +103,15 @@ class CustomerAddress(models.Model):
     customer = models.ForeignKey(Customers, null=True, blank=True, on_delete=models.CASCADE, related_name='addresses')
     
     class Meta:
-        verbose_name = "آدرس مشتری"
-        verbose_name_plural = "آدرس مشتریان"
+        verbose_name = "Customer Address"
+        verbose_name_plural = "Customers Address"
+    
+    @property
+    @admin.display(description="address")
+    def short_description(self):
+        # this property defined for making the address character limited
+        # in django admin panel
+        return truncatechars(self.address, 20)
     
     @classmethod
     def address_limit_reached(cls,customer_id) -> bool:
@@ -107,12 +119,6 @@ class CustomerAddress(models.Model):
         if count<3:
             return False
         return True
-
-
-# permissions = [("complete_access", "Complete Access")]
-
-
-# permissions = [("product_manipulation", "Product Manipulation"),
-#                ("discount_manipulation", "Discount Manipulation"),
-#                ("view_store_sections","View Store Sections")]
-# permissions = [("view_store_sections","View Store Sections")]
+    
+    def __str__(self):
+        return f"{self.id}--{self.customer.first_name}--{self.customer.last_name}"
