@@ -18,7 +18,7 @@
     <link href="{% static 'main/css/styles.css' %}" rel="stylesheet" />
     <title>{% block page_title %}{% endblock %}</title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <!-- Navigation -->
     {% block navbar %}
     {% include 'website/website_navbar.html' %}
@@ -48,7 +48,21 @@
     <script src="{% static 'main/js/scripts.js' %}"></script>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+    <script>
+        $("#searchBtn").click(function(){
+            const q = $("#searchInp").val()
+            const searchBy = $("#selectOption").val();
+            console.log(searchBy)
+            $.ajax({
+                url:`{% url 'website:search' %}?search_by=${searchBy}&q=${q}`,
+                method: "GET",
+                success: function(data){
+                    window.location.href = `{% url 'website:search' %}?search_by=${searchBy}&q=${q}`        
+                }
+            })
+
+        })
+    </script>
     <script>
         $(document).ready(function () {  
         const counterBadge = $("#cartBadgeCounter");  

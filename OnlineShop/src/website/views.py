@@ -1,5 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView, ListView
 from django.db.models import Sum, Avg
@@ -125,4 +126,27 @@ class ShopProductView(ListView):
                 return self.model.objects.filter(market__id = shop_pk)
         
     
-        
+class SearchView(ListView):
+    product_model = Products
+    market_model = Markets
+    template_name = "website/website_search_result.html"
+    context_object_name = None
+    paginate_by = 8
+    
+    def get_queryset(self):
+        search_by = self.request.GET.get('search_by') 
+        print(search_by)
+        q = self.request.GET.get('q')
+        print(q)
+        match search_by:
+            case "shop":
+                self.context_object_name = "shops"
+                print(self.market_model.objects.filter(market_name__icontains = q))
+                return self.market_model.objects.filter(market_name__icontains = q)
+            case "product":
+                self.context_object_name = "products"
+                print(self.product_model.objects.filter(product_name__icontains = q))
+                return self.product_model.objects.filter(product_name__icontains = q)
+            case __:
+                pass    
+    
