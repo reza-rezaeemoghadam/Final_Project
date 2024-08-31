@@ -1,7 +1,7 @@
+from typing import Any
 from django.db.models.query import QuerySet
-from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, View, ListView
+from django.views.generic import View, ListView, DetailView
 from django.views.generic.edit import CreateView
 from django.contrib import messages
 # Importing Custome Forms
@@ -9,6 +9,7 @@ from customers.forms import CustomerProfileForm, CustomerAddressForm
 # Importing Models
 from accounts.models import User, CustomerAddress
 from website.models import Comments
+from carts.models import Orders, OrderDetails
 # Create your views here.
 class ProfileView(View):
     template_name = "accounts/customer/customer_profile.html"
@@ -38,9 +39,7 @@ class AddressListView(ListView):
     model = CustomerAddress
     
     def get_queryset(self):
-        user_id = self.request.user.id
-        query = self.model.objects.filter(customer__id = user_id)
-        return query
+        return self.model.objects.filter(customer__id = self.request.user.id)
 
 class AddressCreateView(CreateView):
     model_class = CustomerAddress
@@ -126,6 +125,26 @@ class AddressDeleteView(View):
 class CommentListView(ListView):
     template_name = "accounts/customer/customer_comment_list.html"
     model = Comments
-    paginate_by = 1
+    paginate_by = 10
     context_object_name = "comments"
-         
+
+    def get_queryset(self):
+        salam = self.model.objects.filter(customer__id = self.request.user.id)
+        return salam
+    
+class OrderList(ListView):
+    template_name = "accounts/customer/customer_order_list.html"
+    model = Orders
+    paginate_by = 10
+    context_object_name = "orders"   
+    
+    def get_queryset(self):
+        return self.model.objects.filter(customer__id = self.request.user.id).order_by("-date")  
+
+class OrderDetailView(ListView):
+    template_name = "accounts/customer/customer_order_detail_list.html"
+    model = OrderDetails
+    context_object_name = "order_details"
+    
+    def get_queryset(self):
+        return self.model.objects.filter(order__id = self.kwargs['pk'])

@@ -1,0 +1,111 @@
+{% extends 'website/website_base.html' %}
+
+{% load custome_tags %}
+
+{% block extra_head_link %}
+{% endblock extra_head_link %}
+
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="container d-flex flex-column bd-highlight mb-3 justify-content-center">
+    <!-- Inner Navbar -->
+    <div class="border border-prime rounded mt-5 mb-5">
+        <div class="p-4">
+            <span>Sort by:</span>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_detail'  market_pk %}?sortBy=most_sell&Type=desc">Best Sellers</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_detail'  market_pk %}?sortBy=price&Type=desc">High-Low</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_detail'  market_pk %}?sortBy=price&Type=asc">Low-High</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_detail'  market_pk %}?sortBy=highest_score&Type=desc">Highest Score</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_detail'  market_pk %}?sortBy=date&Type=desc">New</a>
+        </div>
+    </div>
+    <!-- Products -->
+    <div id="content" class="border border-prime rounded p-4 p-md-5 pt-5 mb-5 me-2">
+        <div class="row">        
+            <h2 class="mb-4">Products</h2>
+        </div>
+        <div class="row">
+            {% block message %}
+            {% include 'message/message.html' %}
+            {% endblock message %}
+        </div>
+        <div class="row">
+            <section class="py-5">
+                <div class="container px-4 px-lg-5 mt-3">
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                        {% for product in products %}
+                        <div class="col mb-5">
+                            <div class="card h-100">
+                                <!-- Product image-->
+                                <img class="card-img-top" src={{product.image.first.image.url}} alt="..." />
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">{{product.product_name}}</h5>
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            {% if product.product_avg_rate %}
+                                            {% numeric_loop product.product_avg_rate as num_list %}
+                                            {% for num in num_list %}
+                                            <div class="bi-star-fill"></div>
+                                            {% endfor %}
+                                            {% else %}
+                                            <div class="bi-star"></div>
+                                            {% endif %}
+                                        </div>
+                                        <!-- Product price-->
+                                        ${{product.price}}
+                                    </div>
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'website:product_detail' product.id %}">View</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+          <!-- Pagination -->
+          <div class="row">
+              <nav aria-label="Page navigation example">
+                  {% if is_paginated %}
+                  <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                        >&laquo;</a
+                      >
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#">&laquo;</a>
+                    </li>
+                    {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                    <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                    {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %} {% endfor %} {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a href="?page={{page_obj.next_page_number}}" class="page-link"
+                        >&raquo;</a
+                      >
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link">&raquo;</a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                  {% endif %}
+                </nav>
+          </div>
+    </div>
+
+</div>
+{% endblock content %}
