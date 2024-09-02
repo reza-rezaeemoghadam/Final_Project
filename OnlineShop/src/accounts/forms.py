@@ -177,13 +177,12 @@ class MarketEditForm(forms.ModelForm):
         model = Markets
         fields = ['market_name', 'address', 'state', 'city', 'postal_code', 'telephone']
     
-
 class ProductImageForm(forms.ModelForm):
     class Meta:
         model = ProductImages
         fields = ['image']
         widgets = {
-            'image' : forms.FileInput(attrs={'class': "form-control mt-1" , 'name': 'images', 'id': 'images', 'multiple': True}),
+            'image' : forms.ClearableFileInput(attrs={'class': "form-control mt-1" , 'name': 'images', 'id': 'images', 'multiple': True}),
         }       
     
 class ProductForm(forms.ModelForm):

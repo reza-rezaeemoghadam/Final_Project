@@ -102,6 +102,8 @@ class LoginView(FormView):
                             if user.is_staff:
                                 return redirect('accounts:dashboard_staff')
                             else:
+                                if 'next' in request.GET:
+                                    return redirect(request.GET['next'])
                                 return redirect('website:home_page')
                         messages.warning(request, "Entered informations were incorrect")
                     else:

@@ -13,9 +13,9 @@
     <div class="border border-prime rounded mt-5 mb-5">
         <div class="p-4">
             <span>Sort by:</span>
-            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?sortBy=most_sell&Type=desc">Top Seller</a>
-            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?sortBy=highest_score&Type=desc">Highest Score</a>
-            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?sortBy=date&Type=desc">New</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?page={{page_obj.number}}&sortBy=most_sell&Type=desc">Top Seller</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?page={{page_obj.number}}&sortBy=highest_score&Type=desc">Highest Score</a>
+            <a class="text-reset text-decoration-none ms-4" href="{% url 'website:shop_list' %}?page={{page_obj.number}}&sortBy=date&Type=desc">New</a>
         </div>
     </div>
     <!-- Shops Card -->
@@ -64,7 +64,7 @@
                   <li class="page-item"><a class="page-link active">{{ i }}</a></li>
                   {% else %}
                   <li class="page-item">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    <a class="page-link" href="?page={{ i }}{% if sortBy %}&sortBy={{sortBy}}&Type={{Type}}{% endif %}">{{ i }}</a>
                   </li>
                   {% endif %} {% endfor %} {% if page_obj.has_next %}
                   <li class="page-item">

@@ -9,4 +9,4 @@ class CartView(TemplateView):
 class CartRegisterationView(LoginRequiredMixin, TemplateView):
     login_url = "accounts:login"
     template_name = "website/cart_submit.html"
-    redirect_field_name = "redirect_to"
+    redirect_field_name = "next"

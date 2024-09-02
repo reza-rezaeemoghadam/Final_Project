@@ -43,8 +43,7 @@ class AddToCartAPIView(APIView):
             if product.dicount:
                 discount = product.discount_calculation()
             if not cart:
-                temp_cart = {pk : { "product_name" : product_name, "price": price, "count":count, "discount": discount, "image": image.image.url}}
-                cart = f'{temp_cart}'
+                cart = {pk : { "product_name" : product_name, "price": price, "count":count, "discount": discount, "image": image.image.url}}
             else:
                 if pk in cart:
                     cart[pk]["count"] += count
@@ -94,9 +93,6 @@ class CartCountAPIView(APIView):
             return  Response({'cart_count': len(cart)}, status=HTTP_200_OK)
         else:
           return Response({'cart_count': 0}, status=HTTP_200_OK)
-
-class TotalPriceAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
 class OrdersListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]

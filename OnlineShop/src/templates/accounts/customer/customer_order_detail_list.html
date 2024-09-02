@@ -43,8 +43,8 @@
                   <td class="text-center">{{detail.quantity}}</td>
                   <td class="text-center" style="width: 150px;">
                     <div class=" text-center d-flex">
-                      <input id="rateInp" max="5" min="0" name="quantity" data-pk={{detail.product.id}} type="number" value="{% customer_rate detail.product request.user.id %}" class="form-control ms-1 rateInp" style="width: 50;" />                      
-                      <a class="ms-3 addRate" id="addRate"><i class="fas bi-check-lg"></i></a>
+                      <input id="rateInp{{detail.product.id}}" max="5" min="0" name="quantity" data-pk={{detail.product.id}} type="number" value="{% customer_rate detail.product request.user.id %}" class="form-control ms-1 rateInp" style="width: 50;" />                      
+                      <a class="ms-3 addRate" onclick="addRate('{{detail.product.id}}')"><i class="fas bi-check-lg"></i></a>
                     </div>
                   </td>
                 </tr>
@@ -94,37 +94,37 @@
 {% block extra_script %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-  $(".addRate").click(function(){
-    const rateInpElem = $(".rateInp") 
-    const rate = rateInpElem.val()
-    const productID = rateInpElem.data('pk')
+  function addRate(product_id) {
+    const rate = $(`#rateInp${product_id}`).val();
     $.ajax({ 
       url :"{% url 'rate-detail' 0 %}",
       type : 'GET',
-      data: {product_id:productID},
+      data: {product_id:product_id},
       success: function(data){
         if (Object.keys(data).length === 0){
           $.ajax({
             url: "{% url 'rate-list' %}",
             method: "POST",
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}', rate:rate, product_id:productID},
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', rate:rate, product_id:product_id},
             success: function(response){
+              alert("Your rate has been successfully submited Thanks!")
               console.log("sucessfully Created")
             }
           })
           
         } else {
           $.ajax({
-            url: "{% url 'rate_update' %}",
-            method: "PATCH",
-            data: {rate:rate, product_id:productID},
+            url: "{% url 'rate-detail' 0 %}",
+            method: "PATCH",        
+            headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            data: {rate:rate, product_id:product_id},
             success: function(response){
-              console.log("sucessfully Updated")
+              alert("sucessfully Updated")
             }
           })
       }    
       }
     })
-  })
+  }
 </script>
 {% endblock extra_script %}

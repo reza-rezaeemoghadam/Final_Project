@@ -1,6 +1,5 @@
 from typing import Any
-from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView, ListView
 from django.db.models import Sum, Avg
@@ -10,7 +9,7 @@ from .forms import AddComment
 # Importing Custome Models
 from website.models import Products, Comments, ProductImages, Discounts, Markets
 from accounts.models import User
-from carts.models import Orders, OrderDetails 
+from carts.models import OrderDetails 
 
 # Create your views here.
 class HomePageView(View):
@@ -37,7 +36,9 @@ class ProductDetailView(DetailView):
     context_object_name = "product"
     template_name = 'website/product_detail.html'
 
-class AddCommentView(View):
+class AddCommentView(LoginRequiredMixin, View):
+    login_url = "accounts:login"
+    redirect_field_name = "next"
     comment_model = Comments
     product_model = Products
     customer_model = User
@@ -72,6 +73,15 @@ class ShopView(ListView):
     template_name = 'website/shop_page.html'    
     paginate_by = 2
     
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        sort_by =self.request.GET.get('sortBy')
+        sort_type = self.request.GET.get('Type') 
+        if sort_by and sort_type:
+            context['sortBy'] = sort_by
+            context['Type'] = sort_type
+        return context
+        
     def get_queryset(self):
         sort_type = self.request.GET.get('Type')
         if sort_type == 'asc':
@@ -101,7 +111,12 @@ class ShopProductView(ListView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        sort_by =self.request.GET.get('sortBy')
+        sort_type = self.request.GET.get('Type') 
         context['market_pk'] = self.kwargs['pk']
+        if sort_by and sort_type:
+            context['sortBy'] = sort_by
+            context['Type'] = sort_type
         return context
     
     def get_queryset(self):

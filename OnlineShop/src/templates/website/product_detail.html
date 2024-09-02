@@ -1,6 +1,7 @@
 {% extends 'website/website_base.html' %}
 
 {% load static %}
+{% load custome_tags %}
 
 {% block extra_head_link %}
 {% endblock extra_head_link %}
@@ -33,13 +34,26 @@
                         </a>
                         </div>
                     </div>
-                    <!-- Product Image Carousel  -->
+                    <!-- Product detail  -->
                     <div class="col-md-6">
-                        <div class="small mb-1">SKU: BST-498</div>
+                        <div class="d-flex align-item-left small text-warning mb-2">
+                            {% if product.product_avg_rate %}
+                            {% numeric_loop product.product_avg_rate as num_list %}
+                            {% for num in num_list %}
+                            <div class="bi-star-fill"></div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="bi-star"></div>
+                            {% endif %}
+                        </div>
                         <h1 class="display-5 fw-bolder">{{product.product_name}}</h1>
                         <div class="fs-5 mb-5">
-                            <span class="text-decoration-line-through">$45.00</span>
+                            {% if product.dicount %}
+                            <span>${% discount_calculation product %}</span>
+                            <span class="text-decoration-line-through">${{product.price}}</span>
+                            {% else %} 
                             <span>${{product.price}}</span>
+                            {% endif %}
                         </div>
                         <p class="lead">{{product.description}}</p>
                         <div class="d-flex">
@@ -230,7 +244,7 @@
     $.ajax({
         url: "{% url 'add_to_cart' %}",
         method: "POST",
-        data: {pk:pk,count:count},
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk:pk,count:count},
         success: function(res){
             counterBadge.text(res['cart_count'])
         },
