@@ -7,6 +7,9 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages 
 
+# Imporing Custome Permissions
+from accounts.permisssions import IsOwnerMixin, IsManagerMixin, IsOperatorMixin, IsStaffMixin
+
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
                             LoginForm, StaffProfileForm, MarketEditForm, DiscountForm) 
@@ -99,7 +102,7 @@ class LoginView(FormView):
                         is_pass_correct = user.check_password(password)
                         if is_pass_correct:
                             login(request=request, user=user)
-                            if user.is_staff:
+                            if user.is_staff:                                
                                 return redirect('accounts:dashboard_staff')
                             else:
                                 if 'next' in request.GET:
@@ -116,10 +119,10 @@ class LoginView(FormView):
         context = {'login_form' : self.form}
         return render(request, self.template_name, context=context) 
         
-class StaffPanelView(TemplateView):
+class StaffPanelView(IsStaffMixin,TemplateView):
     template_name="accounts/staff/staff_dashboard.html" 
 
-class StaffProfileView(View):
+class StaffProfileView(IsStaffMixin, View):
     template_name="accounts/staff/staff_profile.html"   
     staff_form = StaffProfileForm
     market_form = MarketEditForm
@@ -138,25 +141,34 @@ class StaffProfileView(View):
             context = {'staff_form': self.staff_form(initial=data.staff.__dict__),
                        'market':self.market_form(initial=data.market.__dict__),
                        'img':data.staff.img,
+                       'mar_id':data.market.id,
                        'read_only': True}     
         return render(request, self.template_name, context=context)
     
     def post(self, request, pk):
         try:
             edited_form = None
-            if 'mar_btn' in request.POST:
-                instance = self.market_model.objects.filter(id=pk).first()
-                edited_form = self.market_form(request.POST, instance=instance)
-                messages.success(request,'Address info successfully edited.')  
-            elif 'acc_btn' in request.POST:
-                instance = self.staff_model.objects.filter(id=request.user.id).first()
-                edited_form = self.staff_form(request.POST, instance=instance)
+            update = request.GET.get('update')
+            match update:
+                case "market":
+                    if request.user.roll == "Owner":
+                        instance = self.market_model.objects.filter(id=pk).first()
+                        edited_form = self.market_form(request.POST, instance=instance)
+                        messages.success(request,'Market info successfully edited.') 
+                    else:
+                        messages.error(request,"Access Denied you don't have the permission call admin for further action.") 
+                case "staff":            
+                    instance = self.staff_model.objects.filter(id=pk).first()
+                    edited_form = self.staff_form(request.POST, request.FILES, instance=instance)
+                    messages.success(request,'Your info successfully edited.')                  
+                case _:
+                    pass
             if edited_form.is_valid():
                 edited_form.save()  
-                messages.success(request,'Your info successfully edited.')                  
-        except Exception as error:
+        except Exception as error:        
             messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
-        return redirect("accounts:profile_staff")
+        finally:
+            return redirect("accounts:profile_staff")
 
 #TODO: Maybe adding logout confirmation
 class LogoutView(View):    
@@ -164,13 +176,13 @@ class LogoutView(View):
         logout(request)
         return redirect('website:home_page') 
     
-class ProductListView(ListView):
+class ProductListView(IsStaffMixin, ListView):
     model = Products    
     template_name = 'accounts/staff/staff_product_list.html'
     context_object_name = "products"
     paginate_by = 8
     
-class ProductAddView(CreateView):    
+class ProductAddView(IsManagerMixin ,CreateView):    
     model = Products
     image_model = ProductImages
     success_url = "accounts:profile_staff_product_create"
@@ -206,7 +218,7 @@ class ProductAddView(CreateView):
                 instance = self.image_model(product=product, image=image, display_order=counter)
                 instance.save()
                 
-class ProductEditView(View):
+class ProductEditView(IsManagerMixin, View):
     model = Products
     image_model = ProductImages
     template_name = "accounts/staff/staff_product_update.html"
@@ -232,7 +244,7 @@ class ProductEditView(View):
             instance.save()
         return redirect(self.success_url)
         
-class ProductDeleteView(View):
+class ProductDeleteView(IsManagerMixin, View):
     model = Products
     success_message = "Product deleted successfully."
     success_url = "accounts:profile_staff_product"
@@ -242,7 +254,7 @@ class ProductDeleteView(View):
         messages.success(self.request, self.success_message)
         return redirect(self.success_url)
     
-class DeleteImageView(View):
+class DeleteImageView(IsManagerMixin, View):
     model = ProductImages   
     success_url = "accounts:profile_staff_product_edit"
     
@@ -251,4 +263,6 @@ class DeleteImageView(View):
         product_id = request.POST.get('product')
         self.model.objects.get(id = image_id).delete()
         return redirect(self.success_url, pk=product_id)
+    
+
     
