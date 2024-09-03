@@ -33,8 +33,8 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields) 
 
 #TODO: There is some bugs when deleteing the user from Django Admin Panel
-# we are using the PermissionsMixin here so that we can use written permissions and fetch them in the mean time
-class User(AbstractUser, PermissionsMixin):
+# It seems somehow it is related to your migrations later delete everything and try it
+class User(AbstractUser):
     WEBSITE_ROLLS = [
         ("Owner","Owner"),
         ("Manager","Manager"),

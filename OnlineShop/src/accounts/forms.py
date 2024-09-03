@@ -72,7 +72,7 @@ class StaffRegisterForm(forms.ModelForm):
 
     password = forms.CharField(required=True,
                                label='Password',
-                               widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Create a password'}))
+                               widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter a password'}))
     
     confirm_password = forms.CharField(required=True,
                                        label='Password Confirm',
@@ -147,6 +147,42 @@ class StaffProfileForm(forms.ModelForm):
     class Meta:
         model = Staffs
         fields = ['first_name','last_name','email','phone','img','roll']
+
+class StaffForm(forms.ModelForm):
+    confirm_password = forms.CharField(required=True,
+                                   label='Password Confirm',
+                                   widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Confirm password'}))
+    
+    class Meta:
+        model = Staffs
+        fields = ['first_name','last_name','email','phone','img','roll', 'password',  'confirm_password']
+        widgets = {
+            'first_name' : forms.TextInput(attrs={'class': "form-control mt-1",
+                                                  'placeholder':'Enter your first name'}),
+            'last_name' : forms.TextInput(attrs={'class': "form-control mt-1",
+                                                 'placeholder':'Enter your last name'}),
+            'email' : forms.TextInput(attrs={'class': "form-control mt-1",
+                                             'placeholder':'Enter your email'}),
+            'phone' : forms.TextInput(attrs={'class': "form-control mt-1",
+                                             'placeholder':'Enter your phone'}),
+            'img' : forms.FileInput(attrs={'class':"form-control",
+                                           'onchange':"loadImages(event)"}),
+            'roll' : forms.Select(attrs={'class': "form-control mt-1",
+                                            'placeholder':'Enter your roll'}),
+            'password' : forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter a password'})
+        }
+            
+    def clean_confirm_password(self):
+        """ This function is used to check whether 
+            the password and confirm_password are the same. """
+            
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        
+        if password == confirm_password:
+            return confirm_password
+        
+        raise ValidationError('The passwords you entered dont match. Please try again')        
         
 class MarketEditForm(forms.ModelForm):
     

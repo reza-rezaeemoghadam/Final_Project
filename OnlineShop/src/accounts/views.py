@@ -1,10 +1,11 @@
 # Importing needed Django built-in modules 
+from typing import Any
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import View, FormView, TemplateView, ListView, CreateView
 from django.views.generic.edit import DeleteView 
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages 
 
 # Imporing Custome Permissions
@@ -12,12 +13,12 @@ from accounts.permisssions import IsOwnerMixin, IsManagerMixin, IsOperatorMixin,
 
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
-                            LoginForm, StaffProfileForm, MarketEditForm, DiscountForm) 
+                            LoginForm, StaffProfileForm, StaffForm, MarketEditForm, DiscountForm) 
 from website.forms import MarketForm
 
 # Importing Models
 from website.models import StaffMarkets, Markets, Products, ProductImages
-from accounts.models import User
+from accounts.models import User, Staffs
 
 # Create your views here.
 class CustomerRegisterView(View):
@@ -182,7 +183,10 @@ class ProductListView(IsStaffMixin, ListView):
     context_object_name = "products"
     paginate_by = 8
     
-class ProductAddView(IsManagerMixin ,CreateView):    
+    def get_queryset(self):
+        return self.model.objects.filter(market=self.request.user.market.market)
+    
+class ProductAddView(IsManagerMixin, CreateView):    
     model = Products
     image_model = ProductImages
     success_url = "accounts:profile_staff_product_create"
@@ -264,5 +268,73 @@ class DeleteImageView(IsManagerMixin, View):
         self.model.objects.get(id = image_id).delete()
         return redirect(self.success_url, pk=product_id)
     
-
+class StaffListView(IsStaffMixin, ListView):
+    model = Staffs
+    paginate_by = 10
+    context_object_name = "staffs"
+    template_name = "accounts/staff/staff_staff_list.html"
     
+    def get_queryset(self):
+        market = self.request.user.market
+        staff_markets = StaffMarkets.objects.filter(market=market.market)
+        return [staff_market.staff for staff_market in staff_markets]
+    
+class StaffAddView(IsOwnerMixin, CreateView):
+    model = Staffs
+    form_class = StaffForm
+    template_name = "accounts/staff/staff_staff.html"
+    success_url = "accounts:profile_staff_list"
+        
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)    
+        context['staff_form'] = self.form_class
+        return context
+    
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        self.object = form.save()
+        #TODO:Fix this after market relation
+        market_obj = StaffMarkets.objects.create(staff=self.object, market=self.request.user.market.market)
+        return redirect(self.success_url)
+
+#TODO: there is some bugs that i cant understnad here    
+class StaffDeleteView(IsOwnerMixin, View):
+    success_url = "accounts:profile_staff_add"
+    model = Staffs
+    
+    def get(self, request, *args, **kwargs):
+        # obj = StaffMarkets.objects.get(staff__id = self.kwargs['pk'])
+        # obj.delete()
+        staff_obj = self.model.objects.filter(id=self.kwargs['pk']).first()
+        print(staff_obj)
+        staff_obj.delete()
+        messages.success("Selected Staff Deleted Successfully!")
+        return redirect(self.success_url)
+
+class StaffUpdateView(IsOwnerMixin, View):
+    model = Staffs
+    form_class = StaffForm
+    template_name = "accounts/staff/staff_staff.html"
+    success_url = "accounts:profile_staff_list"
+    
+    def get(self, request, pk):
+        staff_obj = self.model.objects.get(id = pk)
+        context = {
+            'staff_form' : self.form_class(initial=staff_obj.__dict__),
+            'staff_id' : staff_obj.id,
+            'img' : staff_obj.img,
+            "edit" : True
+        }
+        return render(request, self.template_name, context)
+    
+    def post(self, request, pk):
+        # try:       
+        instance = self.model.objects.filter(id=pk).first()
+        edited_form = self.form_class(request.POST, request.FILES, instance=instance)
+        messages.success(request,'Your info successfully edited.')                  
+        if edited_form.is_valid():
+            edited_form.save()  
+        # except Exception as error:        
+        messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
+        # finally:
+        return redirect(self.success_url)        

@@ -1,0 +1,90 @@
+{% extends 'accounts/staff/staff_base.html' %}
+
+{% load static %}
+
+{% block main_title %}
+<h1 class="mt-4">Staffs</h1>
+{% endblock main_title %}
+
+{% block main_breadcrumb %}
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard_staff' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Staff</li>
+</ol>
+{% endblock main_breadcrumb%}
+
+{% block main_content %}
+    {% block message %}
+        {% include 'message/message.html' %}
+    {% endblock message %}
+    <!-- Staff Creation Section -->
+    <section class="py-5 border border-prime rounded mt-4 col-12">
+        <div id="content" class="border-prime rounded p-4 p-md-5 pt-5 mt-5 mb-5 me-2 col-12 justify-content-center">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+            </div>
+            <table class="table table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th scope="col">Staff ID</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Roll</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staffs %}
+                    <tr>
+                        <td>{{staff.id}}</td>
+                        <td> <img src={{staff.img.url}} class="img-fluid rounded-3" style="height: 100px; width: 150px;"></td>
+                        <td>{{staff.first_name}} {{staff.last_name}}</td>
+                        <td>{{staff.email}}</td>
+                        <td>{{staff.roll}}</td>
+                        <td><a class="text-reset text-decoration-none" href="{% url 'accounts:profile_staff_update' staff.id %}">Edit</a></td>
+                        <td><a class="text-reset text-decoration-none" href="{% url 'accounts:profile_staff_delete' staff.id %}">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+              <!-- Pagination -->
+              <div class="row">
+                <nav aria-label="Page navigation example">
+                    {% if is_paginated %}
+                    <ul class="pagination">
+                      {% if page_obj.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{page_obj.previous_page_number}}"
+                          >&laquo;</a
+                        >
+                      </li>
+                      {% else %}
+                      <li class="page-item disabled">
+                        <a class="page-link" href="#">&laquo;</a>
+                      </li>
+                      {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                      <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                      {% else %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                      </li>
+                      {% endif %} {% endfor %} {% if page_obj.has_next %}
+                      <li class="page-item">
+                        <a href="?page={{page_obj.next_page_number}}" class="page-link"
+                          >&raquo;</a
+                        >
+                      </li>
+                      {% else %}
+                      <li class="page-item disabled">
+                        <a class="page-link">&raquo;</a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+                  </nav>
+              </div>
+        </div>
+    </section>
+{% endblock main_content %}

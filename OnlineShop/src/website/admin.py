@@ -25,6 +25,7 @@ class MarketAdmin(admin.ModelAdmin):
     view_staff_change_list_page.short_description = "staffs"
 
 # TODO: This needs to get fixed
+admin.site.register(StaffMarkets)
 # @admin.register(StaffMarkets)
 # class StaffMarketAdmin(admin.ModelAdmin):
 #     pass
