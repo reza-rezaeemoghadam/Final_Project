@@ -2,6 +2,12 @@
 
 {% load custome_tags %}
 
+{% block extra_head_setting %}
+<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css' rel='stylesheet'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+{% endblock extra_head_setting %}
+
 {% block main_title %}
 <h1 class="mt-4">Products</h1>
 {% endblock main_title %}
@@ -19,8 +25,14 @@
     {% block message %}
         {% include 'message/message.html' %}
     {% endblock message %}
+    {{ block.super }}
     <section class="py-5">
-        <form class="border border-prime rounded mt-4 col-12" action="{% url 'accounts:profile_staff_create' %}" method="post">
+        <form class="border border-prime rounded mt-4 col-12" action="
+        {% if edit %}                        
+            {% url 'accounts:profile_discount_update' discount_id %}
+        {% else %}
+            {% url 'accounts:profile_discount_add' %}
+        {% endif %}" method="post">
             {% csrf_token %}   
             <h5 class = "mt-2 px-3 py-2"> Discount </h5>   
             <div class="row mt-2 px-3 py-2">
@@ -36,22 +48,35 @@
                 </div>
                 <div class="row mt-2 px-3 py-2">
                     <div class="col">
-                        <label for='dis_type' class="col-sm col-form-label">:</label>
+                        <label for='dis_type' class="col-sm col-form-label">Start:</label>
                         {{discount_form.start_date}}
                     </div>
                     <div class="col">
-                    <label for='dis_amount' class="col-sm col-form-label">:</label>
+                    <label for='dis_amount' class="col-sm col-form-label">End:</label>
                         {{discount_form.end_date}}
                     </div>
                 </div>
             </div>
             <div class="row mt-2 px-3 py-2">
-                <button type="submit" class="btn mt-3 mb-3 btn-primary">Submit</button>
-            </div>
+                {% if edit %}
+                    <button type="submit" class="btn mt-3 mb-3 btn-primary">Edit</button>
+                {% else %}
+                    <button type="submit" class="btn mt-3 mb-3 btn-primary">Submit</button>
+                {% endif %}
+                </div>
         </form>
     </section>
 
 {% endblock main_content%}
 
 {% block extra_script %}
+<script>
+    $(document).ready(function () {
+        
+        $(function () {
+            $("#id_start_date").datepicker();
+            $("#id_end_date").datepicker();
+        });
+    }) 
+</script>
 {% endblock extra_script %}    

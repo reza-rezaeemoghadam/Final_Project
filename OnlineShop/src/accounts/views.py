@@ -1,11 +1,12 @@
 # Importing needed Django built-in modules 
 from typing import Any
+from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import View, FormView, TemplateView, ListView, CreateView
 from django.views.generic.edit import DeleteView 
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages 
 
 # Imporing Custome Permissions
@@ -13,11 +14,11 @@ from accounts.permisssions import IsOwnerMixin, IsManagerMixin, IsOperatorMixin,
 
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
-                            LoginForm, StaffProfileForm, StaffForm, MarketEditForm, DiscountForm) 
-from website.forms import MarketForm
+                            LoginForm, StaffProfileForm, StaffForm, MarketEditForm) 
+from website.forms import MarketForm, DiscountForm
 
 # Importing Models
-from website.models import StaffMarkets, Markets, Products, ProductImages
+from website.models import StaffMarkets, Markets, Products, ProductImages, Discounts
 from accounts.models import User, Staffs
 
 # Create your views here.
@@ -328,13 +329,73 @@ class StaffUpdateView(IsOwnerMixin, View):
         return render(request, self.template_name, context)
     
     def post(self, request, pk):
-        # try:       
-        instance = self.model.objects.filter(id=pk).first()
-        edited_form = self.form_class(request.POST, request.FILES, instance=instance)
-        messages.success(request,'Your info successfully edited.')                  
-        if edited_form.is_valid():
-            edited_form.save()  
-        # except Exception as error:        
-        messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
-        # finally:
-        return redirect(self.success_url)        
+        try:       
+            instance = self.model.objects.filter(id=pk).first()
+            edited_form = self.form_class(request.POST, request.FILES, instance=instance)
+            messages.success(request,'Your info successfully edited.')                  
+            if edited_form.is_valid():
+                obj = edited_form.save(commit=False)  
+                obj.password = make_password(edited_form.cleaned_data['password'])
+                obj.save()
+        except Exception as error:        
+            messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
+        finally:
+            return redirect(self.success_url)      
+    
+class DiscountListView(IsManagerMixin, ListView):
+    template_name = "accounts/staff/staff_discount_list.html"    
+    model = Discounts 
+    context_object_name = "discounts"
+    
+    def get_queryset(self):
+        return self.model.objects.filter(created_by__market=self.request.user.market)
+    
+class DiscountAddView(IsManagerMixin, CreateView):
+    template_name = "accounts/staff/staff_discount.html"
+    success_url = "accounts:profile_discount_list"
+    model = DiscountForm
+    form_class = DiscountForm
+    
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context['discount_form'] = self.form_class
+        return context
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.created_by = request.user
+            obj.product = None
+            obj.save()
+        return redirect(self.success_url)
+    
+class DiscountDeleteView(IsManagerMixin, DeleteView):
+    pass
+
+class DiscountUpdateView(IsManagerMixin, View):
+    template_name = "accounts/staff/staff_discount.html"
+    success_url = "accounts:profile_discount_list"
+    model = Discounts
+    form_class = DiscountForm
+    def get(self, request, pk):
+        dis_obj = self.model.objects.get(id = pk)
+        context = {
+            'discount_form' : self.form_class(initial=dis_obj.__dict__),
+            'discount_id' : dis_obj.id,
+            "edit" : True
+        }
+        return render(request, self.template_name, context)     
+    
+    def post(self, request, pk):
+        try:
+            instance = self.model.objects.filter(id=pk).first()
+            edited_form = self.form_class(request.POST, instance=instance)
+            messages.success(request,'Your info successfully edited.')                  
+            if edited_form.is_valid():
+                edited_form.save()          
+        except Exception as error:
+            messages.error(request,"An error occurred please check your entered info and if it occurred again contact support.")
+        finally:
+            return redirect(self.success_url)   
+        

@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (CustomerRegisterView, StaffRegsiterView, ProductAddView,
                     StaffPanelView, StaffProfileView, StaffListView, StaffAddView, StaffDeleteView, StaffUpdateView,
                     ProductListView, ProductDeleteView, ProductEditView,
+                    DiscountListView, DiscountAddView, DiscountDeleteView, DiscountUpdateView,
                     DeleteImageView,
                     LoginView, LogoutView)
 
@@ -25,6 +26,8 @@ urlpatterns = [
     path('dashboard-staff/products/edit/<int:pk>/', ProductEditView.as_view(), name="profile_staff_product_edit"),
     path('dashboard-staff/products/delete/<int:pk>/', ProductDeleteView.as_view(), name="profile_staff_product_delete"),
     path('dashboard-staff/images/delete/', DeleteImageView.as_view(), name="profile_staff_image_delete"),
-    path('dashboard-staff/discount/add/', DeleteImageView.as_view(), name="profile_discount_add"),
-    path('dashboard-staff/discount/list/', DeleteImageView.as_view(), name="profile_discount_add"),
+    path('dashboard-staff/discount/list/', DiscountListView.as_view(), name="profile_discount_list"),
+    path('dashboard-staff/discount/add/', DiscountAddView.as_view(), name="profile_discount_add"),
+    path('dashboard-staff/discount/delete/<int:pk/', DiscountDeleteView.as_view(), name="profile_discount_delete"),
+    path('dashboard-staff/discount/update/<int:pk>/', DiscountUpdateView.as_view(), name="profile_discount_update"),
 ]

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars 
 
+import uuid
 # Importing models
 from accounts.models import Customers, Staffs
 
@@ -56,14 +57,15 @@ class Discounts(models.Model):
         ('value', 'Value'),
     ]
     
-    dis_code = models.CharField(max_length=32, unique=True)
+    dis_code = models.UUIDField(max_length=32, default=uuid.uuid4(), unique=True)
     dis_type = models.CharField(max_length=15, choices=DISCOUNT_TYPES, default="percentage")
     dis_amount = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     redeemed = models.BooleanField(default=False)
     expired = models.BooleanField(default=False)
-    applied_by = models.ForeignKey(Customers, on_delete=models.DO_NOTHING)   
+    applied_by = models.ForeignKey(Customers, null=True, related_name="redeemed_discount",on_delete=models.DO_NOTHING)   
+    created_by = models.ForeignKey(Staffs, related_name="applied_discount", on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name = "Discount"

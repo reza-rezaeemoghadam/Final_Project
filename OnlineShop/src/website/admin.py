@@ -125,10 +125,11 @@ class DiscountAdmin(admin.ModelAdmin):
         # 1.Gain access to the staff change page 
         # 2.Customize the staff column 
         # 3.Display the first_name and last_name as it's link 
-        url = (
-            reverse("admin:accounts_staffs_change", args=[obj.applied_by.id])
-        )
-        return format_html('<a href="{}">{} {}</a>', url, obj.applied_by.first_name, obj.applied_by.last_name)
+        if obj.applied_by:
+            url = (
+                reverse("admin:accounts_staffs_change", args=[obj.applied_by.id])
+            )
+            return format_html('<a href="{}">{} {}</a>', url, obj.applied_by.first_name, obj.applied_by.last_name)
 
     view_product_change_page.short_description = "product"
     view_discount_change_page.short_description = "discount"

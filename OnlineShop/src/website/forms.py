@@ -1,6 +1,8 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 
-from website.models import Markets, Comments
+# Importing Custome Models
+from website.models import Markets, Comments, Discounts
 
 class MarketForm(forms.ModelForm):
     market_name = forms.CharField(max_length=100,
@@ -44,3 +46,16 @@ class AddComment(forms.ModelForm):
             'class': 'form-control rounded',
             'id': 'textAreaExample',
             'row':'4'})
+
+
+class DiscountForm(forms.ModelForm):
+    
+    class Meta:
+        model = Discounts
+        fields = ['dis_type', 'dis_amount', 'start_date', 'end_date']
+        widgets = {
+            'dis_type' : forms.Select(attrs={'class': 'form-control'}),
+            'dis_amount' : forms.NumberInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter the discount amount '}),
+            'start_date' : forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter start date'}),
+            'end_date' : forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter end date'})
+        }
