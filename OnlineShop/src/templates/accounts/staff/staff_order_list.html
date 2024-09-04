@@ -26,25 +26,35 @@
             <table class="table table-bordered text-center">
                 <thead>
                   <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Product</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">discount</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Shipment Date</th>
+                    <th scope="col">shipment_status</th>
+                    <th scope="col">Total Paid</th>
+                    <th scope="col">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for detail in details %}
+                    {% for order in orders %}
                     <tr>
-                        <td>
-                            <img src={{detail.product.image.all.0.image.url}} class="img-fluid rounded-3" style="height: 100px; width: 150px;">
+                        <td>{{order.id}}</td>
+                        <td>{{order.customer.first_name}} {{order.customer.last_name}}</td>
+                        <td>{{order.shipment_date}}</td>
+                        <td style="width: 250px;">
+                          <div class=" text-center d-flex">
+                            <select id="select{{order.id}}" class="form-select" aria-label="Default select example" style="width: 150px;">
+                              <option value="{{order.shipment_status}}">{{order.shipment_status}}</option>
+                              {% for status in order.SHIPMENT_STATUS %}
+                                {% if status.0 != order.shipment_status %}
+                                  <option value="{{status.0}}">{{status.0}}</option>
+                                {% endif %}
+                              {% endfor %}
+                            </select>
+                            <a class="ms-3 addRate" onclick="shipmentUpdate('{{order.id}}')"><i class="fa-solid fa-check"></i></a>
+                          </div>
                         </td>
-                        <td>{{detail.product.product_name}}</td>
-                        <td>{{detail.price}}</td>
-                        <td>{{detail.discount}}</td>
-                        <td>{{detail.quantity}}</td>
-                        <td>{{detail.total}}</td>
+                        <td>{{order.total_paid}}</td>
+                        <td><a class="text-reset text-decoration-none" href="{% url 'accounts:profile_order_detail' order.id %}">Detail</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -88,3 +98,30 @@
         </div>
     </section>
 {% endblock main_content %}
+
+{% block extra_script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+function shipmentUpdate(orderID){
+  const selectedShipment = $(`#select${orderID}`).find(":selected").val();
+  const url = "{% url 'order_shipment_update' 0 %}".replace("0", orderID)
+  fetch(url, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ shipment_status: selectedShipment }), // Replace 'price' with the actual field you want to update
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        alert("Shipment status successfully changed!")
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert("Something went wrogn call the support!")
+    });
+};
+</script>
+{% endblock extra_script %}

@@ -4,6 +4,7 @@ from .views import (CustomerRegisterView, StaffRegsiterView, ProductAddView,
                     StaffPanelView, StaffProfileView, StaffListView, StaffAddView, StaffDeleteView, StaffUpdateView,
                     ProductListView, ProductDeleteView, ProductEditView,
                     DiscountListView, DiscountAddView, DiscountDeleteView, DiscountUpdateView,
+                    OrdersView, OrderDetailView,
                     DeleteImageView,
                     LoginView, LogoutView)
 
@@ -30,4 +31,6 @@ urlpatterns = [
     path('dashboard-staff/discount/add/', DiscountAddView.as_view(), name="profile_discount_add"),
     path('dashboard-staff/discount/delete/<int:pk/', DiscountDeleteView.as_view(), name="profile_discount_delete"),
     path('dashboard-staff/discount/update/<int:pk>/', DiscountUpdateView.as_view(), name="profile_discount_update"),
+    path('dashboard-staff/order/list/', OrdersView.as_view(), name="profile_order_list"),
+    path('dashboard-staff/order/<int:pk>/detail/', OrderDetailView.as_view(), name="profile_order_detail"),
 ]

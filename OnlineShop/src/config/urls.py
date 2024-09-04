@@ -28,6 +28,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/cart/', include('carts.api.v1.urls')),
     path('api/v1/customer/', include('customers.api.v1.urls')),
+    path('api/v1/staff/', include('accounts.api.v1.urls')),
 ]
 
 admin.site.site_header = "Echo Shop Adminstration Page"

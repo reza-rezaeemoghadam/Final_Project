@@ -42,7 +42,6 @@ class RatingSubmitAPIView(ModelViewSet):
         return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
     
     def update(self, request, *args, **kwargs):
-        print('salam')
         user = request.user
         product = Products.objects.filter(id = request.data.get("product_id")).first()
         rate_obj = Ratings.objects.filter(customer = user, product = product).first()

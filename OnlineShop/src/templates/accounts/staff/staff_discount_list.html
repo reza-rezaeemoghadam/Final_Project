@@ -3,13 +3,13 @@
 {% load static %}
 
 {% block main_title %}
-<h1 class="mt-4">Orders</h1>
+<h1 class="mt-4">Discounts</h1>
 {% endblock main_title %}
 
 {% block main_breadcrumb %}
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard_staff' %}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Orders</li>
+    <li class="breadcrumb-item active">Discounts</li>
 </ol>
 {% endblock main_breadcrumb%}
 
@@ -26,25 +26,29 @@
             <table class="table table-bordered text-center">
                 <thead>
                   <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Product</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">discount</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
+                    <th scope="col">Discount ID</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                    <th scope="col">Redeemed</th>
+                    <th scope="col">Expired</th>
+                    <th scope="col">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for detail in details %}
+                    {% for discount in discounts %}
                     <tr>
-                        <td>
-                            <img src={{detail.product.image.all.0.image.url}} class="img-fluid rounded-3" style="height: 100px; width: 150px;">
-                        </td>
-                        <td>{{detail.product.product_name}}</td>
-                        <td>{{detail.price}}</td>
-                        <td>{{detail.discount}}</td>
-                        <td>{{detail.quantity}}</td>
-                        <td>{{detail.total}}</td>
+                        <td>{{discount.id}}</td>
+                        <td>{{discount.dis_code}}</td>
+                        <td>{{discount.dis_type}}</td>
+                        <td>{{discount.dis_amount}}</td>
+                        <td>{{discount.start_date}}</td>
+                        <td>{{discount.end_date}}</td>
+                        <td>{{discount.redeemed}}</td>
+                        <td>{{discount.expired}}</td>
+                        <td><a class="text-reset text-decoration-none" href="{% url 'accounts:profile_discount_update' discount.id %}">Edit</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
