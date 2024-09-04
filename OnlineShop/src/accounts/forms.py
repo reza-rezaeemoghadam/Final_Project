@@ -122,6 +122,16 @@ class LoginForm(forms.Form):
     
     # remember_password =  
 
+class LoginPhoneForm(forms.Form):
+    phone_number = forms.CharField(required=True,
+                                label="Phone Number",
+                                widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter your phone number'}))  
+
+class OTPForm(forms.Form):
+    otp_key = forms.CharField(required=True,
+                              label="Code",
+                              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter the code'}))  
+
 class StaffProfileForm(forms.ModelForm):
     first_name = forms.CharField(required=True,
                                 widget=forms.TextInput(attrs={'class': "form-control mt-1",

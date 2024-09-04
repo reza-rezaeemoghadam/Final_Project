@@ -13,9 +13,12 @@ from django.contrib import messages
 # Imporing Custome Permissions
 from accounts.permisssions import IsOwnerMixin, IsManagerMixin, IsOperatorMixin, IsStaffMixin
 
+# Importing customer Utils
+from accounts.utils import send_otp_ghasedak, send_otp_twilio
+
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
-                            LoginForm, StaffProfileForm, StaffForm, MarketEditForm)
+                            LoginForm, LoginPhoneForm, OTPForm, StaffProfileForm, StaffForm, MarketEditForm)
 from website.forms import MarketForm, DiscountForm
 
 # Importing Models
@@ -89,7 +92,58 @@ class StaffRegsiterView(View):
                    'market_form': self.market_form}
         return render(request, self.template_name, context=context)
 
+class OTPVerificationView(FormView):
+    template_name = "accounts/login/otp.html"
+    form = OTPForm
 
+    def get(self, request):
+        context = {'login_form': self.form}
+        return render(request, self.template_name, context=context) 
+    
+    def post(self, request):
+        entered_key = request.POST.get('otp_key')       
+        key = request.session.get('key')
+        user_email = request.session.get('user_email')
+        user = User.objects.get(email=user_email)
+        if entered_key == key :
+            if user.is_active:
+                login(request=request, user=user)
+                request.session['user_email'].pop()
+                request.session['key'].pop()
+                if user.is_staff:
+                    return redirect('accounts:dashboard_staff')
+                else:
+                    if 'next' in request.GET:
+                        return redirect(request.GET['next'])
+                    return redirect('website:home_page')
+            else:
+                messages.warning(request, "you haven't activated your account yet")
+        messages.error(request, "Entered code is wrong")        
+        return redirect('accounts:login_otp_verify')
+        
+class LoginPhoneView(FormView):
+    template_name = "accounts/login/login_phone.html"
+    model = User
+    form = LoginPhoneForm
+    
+    def get(self, request):
+        context = {'login_form': self.form}
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request):
+        phone_num = request.POST.get('phone_number')
+        user = User.objects.filter(phone=phone_num).first()
+        if user:
+            res = send_otp_ghasedak(phone_num)
+            if res:
+                request.session['user_email'] = user.email
+                request.session['key'] = res
+                return redirect("accounts:login_otp_verify") 
+            messages.error(request, "Somthing went wrong try another way")
+            return redirect("accounts:login")  
+        messages.error(request, "This phone number has not been registered")
+        return redirect("accounts:login")  
+     
 class LoginView(FormView):
     template_name = 'accounts/login/login.html'
     model = User

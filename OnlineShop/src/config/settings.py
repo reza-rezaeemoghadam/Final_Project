@@ -138,3 +138,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR,"media")
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Twilio Configuration
+ACCOUNT_SID='SKa06392759c73f8189e1274a7123ef0bf'
+AUTH_TOKEN='ee92a314c85fb5db7c4bcc6a0b5d4a7c'
+COUNTRY_CODE='+98'
+TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
+TWILIO_PHONE_NUMBER='+18777804236'
+# Ghasedak API Configuration
+API_KEY = "8d735f73a5e1847af799a5fb5e15cadf0857fadbde1164dac40816193bb5b6d1eywkwH4QgvWsy9nn"

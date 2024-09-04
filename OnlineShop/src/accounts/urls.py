@@ -6,13 +6,15 @@ from .views import (CustomerRegisterView, StaffRegsiterView, ProductAddView,
                     DiscountListView, DiscountAddView, DiscountDeleteView, DiscountUpdateView,
                     OrdersView, OrderDetailView,
                     DeleteImageView,
-                    LoginView, LogoutView)
+                    LoginView, LoginPhoneView, OTPVerificationView, LogoutView)
 
 app_name = "accounts"
 
 urlpatterns = [
     path('register/customer/', CustomerRegisterView.as_view(), name='register_customer'),
     path('login/', LoginView.as_view(), name='login'),
+    path('login/phone', LoginPhoneView.as_view(), name='login_phone'),
+    path('login/phone/verify/', OTPVerificationView.as_view(), name='login_otp_verify'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/staff/', StaffRegsiterView.as_view(), name='register_owner'),
     path('dashboard-staff/', StaffPanelView.as_view(), name="dashboard_staff"),
