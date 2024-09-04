@@ -9,7 +9,8 @@
 {% block main_breadcrumb %}
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard_staff' %}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Orders</li>
+    <li class="breadcrumb-item"><a href="{% url 'accounts:profile_order_list' %}">Orders</a></li>
+    <li class="breadcrumb-item active">Details</li>
 </ol>
 {% endblock main_breadcrumb%}
 

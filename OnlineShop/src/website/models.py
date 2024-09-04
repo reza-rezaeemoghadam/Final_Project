@@ -5,7 +5,9 @@ from django.utils import timezone
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars 
 
+# Importign Extra Modules
 import uuid
+
 # Importing models
 from accounts.models import Customers, Staffs
 
@@ -17,8 +19,8 @@ class Markets(models.Model):
     city = models.CharField(max_length=30)
     postal_code = models.CharField(max_length=20)
     telephone = models.CharField(max_length=15, null=True, blank=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(null=False, default=timezone.now)
+    updated_at = models.DateTimeField(null=False, default=timezone.now)
     
     class Meta:
         verbose_name = "Market"
@@ -72,7 +74,7 @@ class Discounts(models.Model):
         verbose_name_plural = "Discounts"    
 
     def __str__(self):
-        return f"{self.id}--{self.product.product_name}"
+        return f"{self.id}--{self.dis_type}"
 
 class Products(models.Model):
     product_name = models.CharField(max_length=100)
@@ -83,8 +85,8 @@ class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, related_name='product')
     #TODO: Fixing this column name
     dicount = models.OneToOneField(Discounts, null=True, blank=True, on_delete=models.SET_NULL, related_name='product')   
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(null=False, default=timezone.now)
+    updated_at = models.DateTimeField(null=False, default=timezone.now)
     
     class Meta:
         verbose_name = "Product"
@@ -146,7 +148,7 @@ class Ratings(models.Model):
         return 0
 
     def __str__(self):
-        return f"{self.customer.first_name} {self.customer.last_name}--{self.product.product_name}"
+        return f"{self.customer.first_name}--{self.customer.last_name}--{self.product.product_name}"
     
 class Comments(models.Model):
     title = models.CharField(max_length=100)
@@ -175,4 +177,4 @@ class Comments(models.Model):
         return truncatechars(self.text, 50)   
         
     def __str__(self):
-        return f"{self.customer.first_name} {self.customer.last_name}--{self.product.product_name}"
+        return f"{self.customer.first_name}--{self.customer.last_name}--{self.product.product_name}"

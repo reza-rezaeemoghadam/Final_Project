@@ -48,7 +48,7 @@ class Orders(models.Model):
         verbose_name_plural = "Orders"  
         
     def __str__(self):
-        return f"{self.id}--{self.customer.first_name} {self.customer.last_name}"
+        return f"{self.id}--{self.customer.first_name}--{self.customer.last_name}"
      
 class OrderDetails(models.Model):
     quantity = models.IntegerField()
