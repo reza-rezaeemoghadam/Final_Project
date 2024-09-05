@@ -14,7 +14,10 @@ from django.contrib import messages
 from accounts.permisssions import IsOwnerMixin, IsManagerMixin, IsOperatorMixin, IsStaffMixin
 
 # Importing customer Utils
-from accounts.utils import send_otp_ghasedak, send_otp_twilio
+from accounts.utils import send_otp_ghasedak
+
+# Importing Extra Modules
+import json
 
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
@@ -27,8 +30,6 @@ from accounts.models import User, Staffs
 from carts.models import Orders, OrderDetails
 
 # Create your views here.
-
-
 class CustomerRegisterView(View):
     template_name = 'accounts/register/register_customer.html'
     model = User
@@ -55,7 +56,6 @@ class CustomerRegisterView(View):
 
         context = {'register_form': self.form()}
         return render(request, self.template_name, context=context)
-
 
 class StaffRegsiterView(View):
     template_name = 'accounts/register/register_staff.html'
@@ -188,9 +188,22 @@ class LoginView(FormView):
         return render(request, self.template_name, context=context)
 
 
-class StaffPanelView(IsStaffMixin, TemplateView):
+class StaffPanelView(IsStaffMixin, View):
     template_name = "accounts/staff/staff_dashboard.html"
-
+    
+    def get_context_data(self, request):
+        market =request.user.market.market
+        context = {}
+        context['total_sale'] = OrderDetails.get_total_market_sales(market)
+        context['last_month_sale'] = Orders.get_total_income_last_n_days(market,30)
+        context ['count_returned_orders'] = Orders.count_returned_orders(market)
+        context ['count_delivered_orders'] = Orders.count_delivered_orders(market)
+        # context['top_sale'] = list(OrderDetails.get_top_best_selling_products(market))
+        # context['every_day_sale_count'] = list(OrderDetails.sales_count_last_30_days(market))
+        return context
+    
+    def get(self, request):
+        return render(request, self.template_name, context=self.get_context_data(request))    
 
 class StaffProfileView(IsStaffMixin, View):
     template_name = "accounts/staff/staff_profile.html"

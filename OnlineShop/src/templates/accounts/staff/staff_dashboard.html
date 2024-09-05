@@ -14,73 +14,33 @@
 <div class="row">
     <div class="col-xl-3 col-md-6">
       <div class="card bg-primary text-white mb-4">
-        <div class="card-body">Primary Card</div>
-        <div
-          class="card-footer d-flex align-items-center justify-content-between"
-        >
-          <a class="small text-white stretched-link" href="#"
-            >View Details</a
-          >
-          <div class="small text-white">
-            <i class="fas fa-angle-right"></i>
-          </div>
-        </div>
+        <div class="card-body">Total Sale: {{total_sale}}</div>
       </div>
     </div>
     <div class="col-xl-3 col-md-6">
       <div class="card bg-warning text-white mb-4">
-        <div class="card-body">Warning Card</div>
-        <div
-          class="card-footer d-flex align-items-center justify-content-between"
-        >
-          <a class="small text-white stretched-link" href="#"
-            >View Details</a
-          >
-          <div class="small text-white">
-            <i class="fas fa-angle-right"></i>
-          </div>
-        </div>
+        <div class="card-body">Last Month Sale: {{last_month_sale}}</div>
       </div>
     </div>
     <div class="col-xl-3 col-md-6">
       <div class="card bg-success text-white mb-4">
-        <div class="card-body">Success Card</div>
-        <div
-          class="card-footer d-flex align-items-center justify-content-between"
-        >
-          <a class="small text-white stretched-link" href="#"
-            >View Details</a
-          >
-          <div class="small text-white">
-            <i class="fas fa-angle-right"></i>
-          </div>
-        </div>
+        <div class="card-body">Delivered Orders: {{count_delivered_orders}}</div>
       </div>
     </div>
     <div class="col-xl-3 col-md-6">
       <div class="card bg-danger text-white mb-4">
-        <div class="card-body">Danger Card</div>
-        <div
-          class="card-footer d-flex align-items-center justify-content-between"
-        >
-          <a class="small text-white stretched-link" href="#"
-            >View Details</a
-          >
-          <div class="small text-white">
-            <i class="fas fa-angle-right"></i>
-          </div>
-        </div>
+        <div class="card-body">Returned Orders: {{count_returned_orders}}</div>
       </div>
     </div>
   </div>
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-xl-6">
       <div class="card mb-4">
         <div class="card-header">
           <i class="fas fa-chart-area me-1"></i>
-          Area Chart Example
+          Last 30 Days Sales Count
         </div>
-        <div class="card-body">
+        <div id="myAreaChartData" class="card-body">
           <canvas id="myAreaChart" width="100%" height="40"></canvas>
         </div>
       </div>
@@ -89,12 +49,33 @@
       <div class="card mb-4">
         <div class="card-header">
           <i class="fas fa-chart-bar me-1"></i>
-          Bar Chart Example
+          Top 6 Best Sales Products
         </div>
-        <div class="card-body">
+        <div id="myBarChartData" class="card-body">
           <canvas id="myBarChart" width="100%" height="40"></canvas>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 {% endblock main_content %}
+
+{% block extra_script %}
+<!-- <script>
+  const rawData =  document.getElementById("myAreaChartData").getAttribute('data-products');
+  console.log(rawData)
+  var xValues = data_top_product.map(item => item.product__product_name);
+  var yValues = data_top_product.map(item => item.total_sales);
+  var barColors = ["purple", "purple", "purple", "purple", "purple", "purple"];
+  
+  new Chart("myBarChart", {
+        type: "bar",
+        data: {
+          labels: xValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+            }]
+          },
+        });
+</script>
+{% endblock extra_script %} -->
