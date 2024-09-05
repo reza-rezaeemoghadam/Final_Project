@@ -13,6 +13,7 @@ colorama==0.4.6
 cryptography==42.0.5
 dill==0.3.8
 distlib==0.3.8
+dj-database-url==2.2.0
 Django==4.2
 django-mathfilters==1.0.0
 django-redis==5.4.0
@@ -34,6 +35,7 @@ platformdirs==4.2.2
 pox==0.3.4
 ppft==1.7.6.8
 psycopg2==2.9.9
+psycopg2-binary==2.9.9
 pycparser==2.21
 PyExecJS==1.5.1
 PyJWT==2.9.0
