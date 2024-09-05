@@ -21,11 +21,11 @@ import json
 
 # Importing Custome Forms
 from accounts.forms import (CustomerRegisterForm, StaffRegisterForm, ProductForm, ProductImageForm,
-                            LoginForm, LoginPhoneForm, OTPForm, StaffProfileForm, StaffForm, MarketEditForm)
+                            LoginForm, LoginPhoneForm, OTPForm, StaffProfileForm, StaffForm, MarketEditForm, CategoryForm)
 from website.forms import MarketForm, DiscountForm
 
 # Importing Models
-from website.models import StaffMarkets, Markets, Products, ProductImages, Discounts
+from website.models import StaffMarkets, Markets, Products, ProductImages, Discounts, Categories
 from accounts.models import User, Staffs
 from carts.models import Orders, OrderDetails
 
@@ -108,8 +108,8 @@ class OTPVerificationView(FormView):
         if entered_key == key :
             if user.is_active:
                 login(request=request, user=user)
-                request.session['user_email'].pop()
-                request.session['key'].pop()
+                request.session.pop('user_email')
+                request.session.pop('key')
                 if user.is_staff:
                     return redirect('accounts:dashboard_staff')
                 else:
@@ -539,4 +539,61 @@ class OrderDetailView(IsManagerMixin, ListView):
     
     def get_queryset(self):
         return self.model.objects.filter(order__id = self.kwargs['pk'])
+
+class CategoryListView(IsManagerMixin, ListView):
+    template_name = "accounts/staff/staff_category_list.html"
+    context_object_name = "categories"
+    queryset = Categories.objects.all()
+    paginate_by = 8
+
+class CategoryAddView(IsManagerMixin, CreateView):
+    template_name = "accounts/staff/staff_category.html"
+    success_url = "accounts:profile_category_list"
+    model = Categories
+    form_class = CategoryForm
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context['category_form'] = self.form_class
+        return context
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.parent = None
+            obj.save()
+            messages.success(request, "Category Successfully Added")
+        else:
+            messages.error(request, "Category Addition Failed")
+        return redirect(self.success_url) 
+
+class CategoryUpdateView(IsManagerMixin, FormView):
+    template_name = "accounts/staff/staff_category.html"
+    success_url = "accounts:profile_category_list"
+    model = Categories
+    form_class = CategoryForm
+
+    def get(self, request, pk):
+        cat_obj = self.model.objects.get(id=pk)
+        context = {
+            'category_form': self.form_class(initial=cat_obj.__dict__),
+            'category_id': cat_obj.id,
+            "edit": True
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        try:
+            instance = self.model.objects.filter(id=pk).first()
+            edited_form = self.form_class(request.POST, instance=instance)
+            messages.success(request, 'Your info successfully edited.')
+            if edited_form.is_valid():
+                edited_form.save()
+        except Exception as error:
+            messages.error(
+                request, "An error occurred please check your entered info and if it occurred again contact support.")
+        finally:
+            return redirect(self.success_url)
+
     

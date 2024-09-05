@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (CustomerRegisterView, StaffRegsiterView, ProductAddView,
                     StaffPanelView, StaffProfileView, StaffListView, StaffAddView, StaffDeleteView, StaffUpdateView,
                     ProductListView, ProductDeleteView, ProductEditView,
+                    CategoryListView, CategoryAddView, CategoryUpdateView,
                     DiscountListView, DiscountAddView, DiscountDeleteView, DiscountUpdateView,
                     OrdersView, OrderDetailView,
                     DeleteImageView,
@@ -35,4 +36,7 @@ urlpatterns = [
     path('dashboard-staff/discount/update/<int:pk>/', DiscountUpdateView.as_view(), name="profile_discount_update"),
     path('dashboard-staff/order/list/', OrdersView.as_view(), name="profile_order_list"),
     path('dashboard-staff/order/<int:pk>/detail/', OrderDetailView.as_view(), name="profile_order_detail"),
+    path('dashboard-staff/category/list/', CategoryListView.as_view(), name="profile_category_list"),
+    path('dashboard-staff/category/add/', CategoryAddView.as_view(), name="profile_category_add"),
+    path('dashboard-staff/category/<int:pk>/update/', CategoryUpdateView.as_view(), name="profile_category_update"),
 ]

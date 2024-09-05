@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 # Importing Custome Model
 from accounts.models import Customers, Staffs
-from website.models import Markets, Products, ProductImages, Discounts
+from website.models import Markets, Products, ProductImages, Discounts, Categories
 
 # Customize Forms
 class CustomerRegisterForm(forms.Form):
@@ -254,3 +254,13 @@ class DiscountForm(forms.ModelForm):
             'start_date' : forms.DateInput(attrs={'class': "form-control mt-1"}),
             'end_date' : forms.DateInput(attrs={'class': "form-control mt-1"}),                
         }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Categories
+        fields = ['title', 'parent']
+        widget = {
+            'title' : forms.TextInput(attrs={'class': "form-control mt-1", 'placeholder':'Enter category title'}),
+            'parent' : forms.Select(attrs={'class': "form-control mt-1"})
+        }      
+        

@@ -53,6 +53,35 @@
           </nav>
         </div>
         <!-- End Staff Manager -->
+        <!-- Start Category -->
+        <a
+        class="nav-link collapsed"
+        href="#"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapseCategories"
+        aria-expanded="false"
+        aria-controls="collapseCategories"
+      >
+        <div class="sb-nav-link-icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        Category
+        <div class="sb-sidenav-collapse-arrow">
+          <i class="fas fa-angle-down"></i>
+        </div>
+      </a>
+      <div
+        class="collapse"
+        id="collapseCategories"
+        aria-labelledby="headingOne"
+        data-bs-parent="#sidenavAccordion"
+      >
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" href="{% url 'accounts:profile_category_list' %}">Categories</a>
+          <a class="nav-link" href="{% url 'accounts:profile_category_add' %}">Add Category</a>
+        </nav>
+      </div>           
+        <!-- End Category -->
         <!-- Start Product Manager -->
         <a
           class="nav-link collapsed"
