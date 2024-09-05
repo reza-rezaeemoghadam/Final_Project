@@ -65,8 +65,7 @@ class AddCommentView(LoginRequiredMixin, View):
             comment.product = self.product_model.objects.get(id =pk)
             comment.save()
             return redirect('website:product_detail', pk=pk)
-        
-        
+               
 class ShopView(ListView):
     model = Markets
     context_object_name = 'shops'
@@ -101,7 +100,6 @@ class ShopView(ListView):
                 return markets_with_sales
             case _: 
                 return self.model.objects.all()
-
 
 class ShopProductView(ListView):
     model = Products
@@ -139,8 +137,79 @@ class ShopProductView(ListView):
                 return self.model.objects.order_by(f"{sort_type}price").filter(market__id = shop_pk)
             case _: 
                 return self.model.objects.filter(market__id = shop_pk)
-        
+
+class ProductView(ListView):
+    model = Products
+    context_object_name = 'products'
+    template_name = 'website/product_list.html'    
+    paginate_by = 2
     
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        sort_by =self.request.GET.get('sortBy')
+        sort_type = self.request.GET.get('Type') 
+        context['category_pk'] = self.kwargs['pk']
+        if sort_by and sort_type:
+            context['sortBy'] = sort_by
+            context['Type'] = sort_type
+        return context
+    
+    def get_queryset(self):
+        category_pk = self.kwargs['pk']
+        sort_type = self.request.GET.get('Type')
+        if sort_type == 'asc':
+            sort_type = ''
+        else:
+            sort_type = '-'
+        
+        sort_by = self.request.GET.get('sortBy')
+        match sort_by:
+            case 'date':
+                return self.model.objects.all().order_by(f"{sort_type}created_at").filter(category__id = category_pk)
+            case 'highest_score':
+                return self.model.objects.annotate(avg_product_rating=Avg('rating__rate')).order_by(f"{sort_type}avg_product_rating").filter(category__id = category_pk)  
+            case 'most_sell':
+                return self.model.objects.annotate(total_quantity_sold=Sum('orderdetails__quantity')).order_by(f"{sort_type}total_quantity_sold").filter(category__id = category_pk)
+            case 'price':
+                return self.model.objects.order_by(f"{sort_type}price").filter(category__id = category_pk)
+            case _: 
+                return self.model.objects.filter(category__id = category_pk)
+
+class AllProductView(ListView):
+    model = Products
+    context_object_name = 'products'
+    template_name = 'website/product_list_all.html'    
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        sort_by =self.request.GET.get('sortBy')
+        sort_type = self.request.GET.get('Type') 
+        if sort_by and sort_type:
+            context['sortBy'] = sort_by
+            context['Type'] = sort_type
+        return context
+    
+    def get_queryset(self):
+        sort_type = self.request.GET.get('Type')
+        if sort_type == 'asc':
+            sort_type = ''
+        else:
+            sort_type = '-'
+        
+        sort_by = self.request.GET.get('sortBy')
+        match sort_by:
+            case 'date':
+                return self.model.objects.all().order_by(f"{sort_type}created_at")
+            case 'highest_score':
+                return self.model.objects.annotate(avg_product_rating=Avg('rating__rate')).order_by(f"{sort_type}avg_product_rating")
+            case 'most_sell':
+                return self.model.objects.annotate(total_quantity_sold=Sum('orderdetails__quantity')).order_by(f"{sort_type}total_quantity_sold")
+            case 'price':
+                return self.model.objects.order_by(f"{sort_type}price")
+            case _: 
+                return self.model.objects.all()
+            
 class SearchView(ListView):
     product_model = Products
     market_model = Markets

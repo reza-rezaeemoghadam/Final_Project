@@ -75,8 +75,24 @@
             error: function(){
              alert("error!");
             }
-            });})
+            });
+        
+        const categoruContainer = $("#categoryCon"); 
+        let url = "{% url 'website:products' 0 %}" 
+        $.ajax({
+            url: "{% url 'category_list' %}",
+            method: "GET",
+            success: function(res){
+                $.each(res, function(key, item) {
+                categoruContainer.append(`<li><a class="dropdown-item" href=${url.replace(0, item.id)}>${item.title}</a></li>`)
+                });
+            },
+            error: function(){
+             console.log("error!");
+            }
+            });
+        
+        })
     </script>
-
 </body>
 </html>
