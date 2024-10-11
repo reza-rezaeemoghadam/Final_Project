@@ -16,4 +16,5 @@ This project is an online store built with Django, allowing vendors to manage pr
 1.Clone the repository:
 ```
    git clone https://github.com/reza-rezaeemoghadam/Final_Project.git
+```
    cd project_directory
