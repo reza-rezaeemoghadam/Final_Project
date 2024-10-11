@@ -16,5 +16,33 @@ This project is an online store built with Django, allowing vendors to manage pr
 1.Clone the repository:
 ```
    git clone https://github.com/reza-rezaeemoghadam/Final_Project.git
+```
+2.Change to the project directory:
+```
    cd project_directory
+```
+3.Create a virtual environment:
+```
+    python -m venv venv
+    source venv/bin/activate  # For Windows: venv\Scripts\activate
+```
+4.Install dependencies:
+```
+     pip install -r requirements.txt
+```
+5.Set up the database:
+-- For development, use SQLite (default)
+-- For production, configure PostgreSQL using .env file:
+   -- DATABASE_URL=postgresql://username:password@localhost:5432/OnlineShop-FinalProject
+6.Run migrations:
+```
+    python manage.py migrate
+```
+7.Create a superuser for the admin panel:
+```
+    python manage.py createsuperuser
+```
+8.Run the development server:
+```
+    python manage.py runserver
 ```
